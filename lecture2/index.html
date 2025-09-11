@@ -1,0 +1,1960 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Copyright & AI — 2.5‑Hour Lecture Deck</title>
+<style>
+  :root{
+    --bg: #000000; /* website dark primary */
+    --fg: #ffffff; /* website text primary */
+    --muted: #b0b0b0; /* website text secondary */
+    --accent: #D4A574; /* website accent color */
+    --accent2: #E6B887; /* website accent hover */
+    --ok: #34d399; --warn: #f59e0b; --bad: #f87171;
+    --glass: rgba(0,0,0,.8);
+    --stroke: rgba(255,255,255,.12);
+    --shadow: 0 4px 12px rgba(0,0,0,.3);
+  }
+  html, body { height:100%; }
+  body{
+    margin:0; color:var(--fg); background: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+    overflow:hidden;
+  }
+  /* Deck layout */
+  .deck{ height:100%; display:grid; grid-template-rows:auto 1fr auto; }
+  header, footer{ display:flex; align-items:center; gap:.75rem; padding:.75rem 1rem; backdrop-filter: blur(10px); background:var(--glass); box-shadow:var(--shadow); z-index:20; }
+  header{ border-bottom:1px solid var(--stroke); }
+  footer{ border-top:1px solid var(--stroke); justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:.65rem; font-weight:800; letter-spacing:.4px; }
+  .brand .dot{ width:.65rem; height:.65rem; border-radius:50%; background:conic-gradient(from 0deg, var(--accent), var(--accent2)); box-shadow:0 0 20px rgba(99,102,241,.8); }
+  .progress{ position:relative; height:6px; flex:1; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+  .progress>span{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 0 18px rgba(99,102,241,.6); }
+  .controls{ display:flex; align-items:center; gap:.5rem; }
+  .btn{ appearance:none; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--fg); padding:.5rem .8rem; border-radius:999px; cursor:pointer; font-weight:700; }
+  .btn:hover{ border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.08); }
+
+  /* Slides */
+  .slides{ position:relative; height:100%; overflow:hidden; }
+  .slide{ position:absolute; inset:0; padding:8vh 8vw; display:none; flex-direction:column; justify-content:center; gap:1.2rem; }
+  .slide.active{ display:flex; }
+
+  /* Full‑bleed imagery */
+  .cover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; opacity:.28; filter:grayscale(100%) contrast(1.05) brightness(.6); }
+  .cover.xkcd{ opacity:.25 !important; filter:none !important; object-fit:contain; background:white; }
+  .xkcd-bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:0; opacity:.25; filter:none; background:white; }
+  .overlay{ position:absolute; inset:0; z-index:1; background: radial-gradient(60% 60% at 20% 20%, rgba(0,0,0,.35), transparent 60%), linear-gradient(180deg, rgba(4,6,12,.75), transparent 40%); }
+  .slide>*{ position:relative; z-index:2; }
+  .credit{ position:absolute; right:1rem; bottom:1rem; z-index:3; font-size:.8rem; color:#c3c7cf; background:rgba(0,0,0,.42); padding:.25rem .5rem; border-radius:8px; border:1px solid rgba(255,255,255,.12); }
+
+  h1{ margin:0; font-size: clamp(2.2rem, 5.6vw, 4.8rem); line-height:1.05; letter-spacing:.2px; text-shadow:0 4px 32px rgba(0,0,0,.35); }
+  h2{ margin:0; font-size: clamp(1.2rem, 3.2vw, 2rem); color:#d4d8df; }
+  p, li{ font-size: clamp(1rem, 1.6vw, 1.25rem); color:#d7dbe2; }
+  .kicker{ text-transform:uppercase; letter-spacing:.2em; color:var(--muted); font-weight:800; font-size:.9rem; }
+  .big{ font-size: clamp(2rem, 4.5vw, 3.6rem); font-weight:900; letter-spacing:.2px; }
+  .accent{ color:var(--accent); }
+  .accent2{ color:var(--accent2); }
+  .pill{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--stroke); background:rgba(255,255,255,.06); padding:.3rem .7rem; border-radius:999px; font-size:.9rem; }
+
+  /* Polaris Lab branding */
+  .polaris-branding{ 
+    margin-top: 2rem; 
+    display: flex; 
+    justify-content: center; 
+  }
+  .polaris-logo{ 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+  }
+  .logo-image{ 
+    height: 2.5rem; 
+    width: auto; 
+    filter: brightness(0) invert(1); 
+  }
+  .polaris-text{ 
+    font-size: 1.5rem; 
+    font-weight: 300; 
+    color: var(--fg); 
+    letter-spacing: 0.3em; 
+    text-transform: uppercase; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+  }
+
+
+  /* Two-column layout */
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; }
+  @media (max-width: 768px) { .two-col{ grid-template-columns:1fr; } }
+  
+  /* Minimal-on-screen text (hide lists on slides, show in notes/print) */
+  body:not(.details) .slide .card, body:not(.details) .slide .grid { display:none; }
+  .hint{ opacity:.7; font-size:.95rem; }
+
+  /* Notes */
+  .notes{ display:none; margin-top:1rem; border:1px dashed rgba(255,255,255,.18); background:rgba(6,8,14,.7); padding:1rem; border-radius:14px; }
+  body.show-notes .notes{ display:block; }
+  .notes h3{ margin:.2rem 0 .6rem; font-size:1rem; color:#cbd5e1; text-transform:uppercase; letter-spacing:.16em; }
+  .notes ul{ margin:.3rem 0 0 1.1rem; }
+  .notes li{ margin:.35rem 0; font-size:1rem; }
+
+  /* Print */
+  @media print{
+    body{ overflow:visible; }
+    header, footer{ display:none; }
+    .slide{ position:relative; display:block !important; page-break-after: always; }
+    .notes{ display:block !important; }
+    /* Always show detailed bullets when printing */
+    .slide ul, .slide ol, .card, .grid, .two-col { display:block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+  <header>
+    <div class="brand"><span class="dot"></span><span>Copyright & AI</span></div>
+    <div class="progress" aria-label="progress"><span id="progressbar"></span></div>
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Previous (←)">← Prev</button>
+      <button class="btn" id="nextBtn" title="Next (→)">Next →</button>
+    </div>
+  </header>
+
+  <main class="slides" id="slides">
+
+    <!-- 1 -->
+    <section class="slide active">
+      <div class="kicker">2.5‑hour lecture</div>
+      <h1 class="big">The Basics of <span class="accent">U.S. Copyright</span><br/>— and How It Applies to <span class="accent2">AI</span></h1>
+      <h2>Peter Henderson, J.D., Ph.D.</h2>
+      <div class="polaris-branding">
+        <div class="polaris-logo">
+          <img src="polaris-logo.png" alt="Polaris Lab" class="logo-image" />
+          <div class="polaris-text">Polaris Lab</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide">
+      <h1>Today's Roadmap</h1>
+      <ul>
+        <li><strong>I. Foundations</strong> — who gets copyright in what?</li>
+        <li><strong>II. Rights, Claims, Remedies, and Defenses</strong> — what can you do with copyrighted material?</li>
+        <li><strong>III. Other Considerations</strong> — DMCA • interaction with licenses/contracts</li>
+      </ul>
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Section I (~45 min), Section II (~35 min), Section III (~60 min incl. discussion).</li>
+        <li>We’ll reference recent USCO reports (2025) and live litigation for AI.</li>
+      </ul></div>
+    </section>
+
+    <!-- Quote slide -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 4rem; align-items: center; max-width: 1200px;">
+          <!-- Left side: Photo -->
+          <div style="text-align: center;">
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT3i1Y7MylOjQaAx0VW6sfGMIphDXk4dreHl2Ujuk0-o8D0e0blGROp0jbdTsR2SYw4v9GtcRMGJqSvbg_p3fbRFoq9xEOF9UnplXFbDg" 
+                 alt="Portrait of a woman with blonde hair and glasses" 
+                 style="width: 300px; height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+          
+          <!-- Right side: Quote -->
+          <div style="padding: 2rem;">
+            <blockquote style="
+              font-size: clamp(2rem, 4vw, 3.5rem); 
+              font-weight: 800; 
+              line-height: 1.2; 
+              color: var(--fg); 
+              margin: 0; 
+              font-style: italic;
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              "Copyright law is the only law already in existence that could bring generative AI systems to their knees..."
+            </blockquote>
+            <div style="margin-top: 2rem; font-size: 1.2rem; color: var(--accent); font-weight: 600;">
+              — Pam Samuelson
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1>Foundations</h1>
+      <h2 style="color: var(--accent2); margin-top: 2rem;">Who gets copyright in what?</h2>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide">
+      <img class="cover" alt="Constitution parchment" src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Constitution_of_the_United_States%2C_page_1.jpg"/>
+      <div class="overlay"></div>
+      <!-- <div class="kicker">I. Foundations</div> -->
+      <h1>Intellectual Property Clause of the Constitution</h1>
+      <p class="big" style="font-family: 'Times New Roman', 'Times', serif; font-style: italic; letter-spacing: 0.3px; line-height: 1.3;">"To promote the Progress of Science and useful Arts, by securing for limited Times to Authors and Inventors the exclusive Right to their respective Writings and Discoveries."</p>
+      <div class="credit">Image: U.S. National Archives (public domain)</div>
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>IP Clause: Article I, §8, cl. 8 → empowers Congress to secure exclusive rights for limited times.</li>
+        <li>Copyright is federal statutory law (Title 17), preempting state law for works within scope.</li>
+      </ul></div>
+    </section>
+
+    <!-- 4.5 -->
+    <section class="slide">
+      <!-- <img class="cover" alt="U.S. Capitol building" src="https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2025&q=80"/> -->
+      <div class="overlay"></div>
+      <h1>Congressional Implementation of Constitutional Copyright Power</h1>
+      <!-- <div class="kicker">Currently: Copyright Act of 1976</div> -->
+      
+      <!-- Current Copyright Act Focus -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin: 2rem 0;">
+        
+        <!-- Left Column: Text Content -->
+        <div>
+          <h2 style="margin: 0 0 1rem 0; color: var(--accent); font-size: 2.5rem;">Copyright Act of 1976</h2>
+          <p class="medium" style="margin: 0 0 1rem 0;">Current law governing copyright in the United States (after several iterations) signed into law by President Gerald Ford</p>
+          <!-- <p style="margin: 0 0 2rem 0; font-size: 1.2rem; color: var(--accent2);">October 19, 1976</p> -->
+       
+        </div>
+        
+        <!-- Right Column: Image -->
+        <div style="text-align: center;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/President_Ford_signs_his_Crime_Message_to_Congress_-_NARA_-_7140642.jpg" 
+               alt="President Gerald Ford signing legislation" 
+               style="width: 100%; max-width: 500px; border-radius: 8px;"/>
+          <p class="hint" style="margin-top: 1rem; font-size: 0.9rem;">President Ford signing legislation at the White House</p>
+        </div>
+        
+      </div>
+      
+      <div class="credit">Image: National Archives (President Ford signing legislation)</div>
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Shows the evolution from 1790 to present day.</li>
+        <li>Highlights key technological adaptations (DMCA for digital age).</li>
+        <li>Sets up the current Title 17 framework we'll be discussing.</li>
+      </ul></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide">
+      <h1>17 U.S. Code § 102 - Subject matter of copyright: In general</h1>
+      <div class="kicker"><a href="https://www.law.cornell.edu/uscode/text/17/102" target="_blank" style="color: var(--accent); text-decoration: none;">Read the Full Statute</a></div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); max-height: 70vh; overflow-y: auto;">
+          <span style="font-weight: 600; color: var(--fg);">(a) Copyright protection subsists, in accordance with this title, in </span>
+          <span style="position: relative; display: inline;">
+            <span style="color: var(--warn); font-weight: 600;">original works of authorship</span>
+            <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--warn); font-weight: 600; background: rgba(0, 0, 0, 0.9); padding: 0.2rem 0.4rem; border-radius: 3px; white-space: nowrap; border: 1px solid var(--warn); z-index: 10;">ORIGINALITY</div>
+          </span>
+          <span> </span>
+          <span style="position: relative; display: inline;">
+            <span style="color: var(--accent2); font-weight: 600;">fixed in any tangible medium of expression</span>
+            <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--accent2); font-weight: 600; background: rgba(0, 0, 0, 0.9); padding: 0.2rem 0.4rem; border-radius: 3px; white-space: nowrap; border: 1px solid var(--accent2); z-index: 10;">FIXATION</div>
+          </span>
+          <span>, now known or later developed, from which they can be perceived, reproduced, or otherwise communicated, either directly or with the aid of a machine or device. Works of authorship include the following categories:</span>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.5rem 0;">
+          <ul style="margin: 0; padding-left: 1.5rem; font-size: 1rem;">
+            <li style="margin-bottom: 0.5rem;">(1) literary works;</li>
+            <li style="margin-bottom: 0.5rem;">(2) musical works, including any accompanying words;</li>
+            <li style="margin-bottom: 0.5rem;">(3) dramatic works, including any accompanying music;</li>
+            <li style="margin-bottom: 0.5rem;">(4) pantomimes and choreographic works;</li>
+          </ul>
+          <ul style="margin: 0; padding-left: 1.5rem; font-size: 1rem;">
+            <li style="margin-bottom: 0.5rem;">(5) pictorial, graphic, and sculptural works;</li>
+            <li style="margin-bottom: 0.5rem;">(6) motion pictures and other audiovisual works;</li>
+            <li style="margin-bottom: 0.5rem;">(7) sound recordings; and</li>
+            <li style="margin-bottom: 0.5rem;">(8) architectural works.</li>
+          </ul>
+        </div>
+        
+          <span style="font-weight: 600; color: var(--fg);">(b) In no case does copyright protection for an original work of authorship extend to any </span>
+          <span style="position: relative; display: inline;">
+            <span style="color: var(--muted); font-weight: 600;">idea, procedure, process, system, method of operation, concept, principle, or discovery</span>
+            <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--muted); font-weight: 600; background: rgba(0, 0, 0, 0.9); padding: 0.2rem 0.4rem; border-radius: 3px; white-space: nowrap; border: 1px solid var(--muted); z-index: 10;">EXPRESSION</div>
+          </span>
+          <span>, regardless of the form in which it is described, explained, illustrated, or embodied in such work.</span>
+
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This is the foundational test for copyright protection - all three elements must be present.</li>
+        <li>Most AI training data easily meets these requirements.</li>
+        <li>The moment someone writes code, creates art, or writes text, it's likely copyrighted.</li>
+        <li>Ideas, facts, and procedures are not protected by copyright.</li>
+      </ul></div>
+    </section>
+
+        <!-- 13 -->
+        <section class="slide">
+          <h1>Duration (Post‑1978)</h1>
+          <ul>
+            <li>Life + 70</li>
+            <li>Works‑for‑hire/anonymous/pseudonymous: 95 from publication or 120 from creation</li>
+          </ul>
+
+        </section>
+    
+
+
+    <!-- 6 -->
+    <section class="slide">
+      <h1>Panel Question</h1>
+      <div class="kicker">Where does software fall?</div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.2rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); text-align: center;">
+        <h2 style="color: var(--accent); margin-bottom: 2rem;">Is software copyrightable? If so, what is it protected as? What about algorithms?</h2>
+      </div>
+      
+    </section>
+
+    <!-- 7 -->
+    <section class="slide">
+      <h1>Thick vs. Thin Copyright</h1>
+      <div class="kicker">The scope of copyright protection</div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 1rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+        
+        <!-- Arrow Design -->
+        <div style="position: relative; margin: 3rem auto; height: 150px; width: 90%; max-width: 900px;">
+          <!-- Gradient Arrow Background -->
+          <div style="position: absolute; top: 2%; left: 35%; right: 35%; height: 96%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%); border-radius: 8px; clip-path: polygon(0% 50%, 20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%);"></div>
+          
+          <!-- Thick Copyright (Left) -->
+          <div style="position: absolute; left: -10rem; top: 50%; transform: translateY(-50%); width: 40%;">
+            <h3 style="color: white; margin-bottom: 1rem; font-size: 2rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">THICK COPYRIGHT</h3>
+            <p style="color: white; margin-bottom: 1rem; font-size: 1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5);"><strong>More creative/original</strong></p>
+            <div style="color: white; margin: 0; padding-left: 1.2rem; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5); line-height: 1.6;">
+              <div>Novels, poetry</div>
+              <div>Original artwork, photos, movies</div>
+              <div>Music</div>
+            </div>
+          </div>
+          
+          <!-- Thin Copyright (Right) -->
+          <div style="position: absolute; right: -10rem; top: 50%; transform: translateY(-50%); width: 40%; text-align: right;">
+            <h3 style="color: white; margin-bottom: 1rem; font-size: 2rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">THIN COPYRIGHT</h3>
+            <p style="color: white; margin-bottom: 1rem; font-size: 1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5);"><strong>More functional/fact-based</strong></p>
+            <div style="color: white; margin: 0; padding-left: 1.2rem; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5); line-height: 1.6;">
+              <div>Phone directories, databases</div>
+              <div>Software</div>
+              <div>Factual compilations, textbooks</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Protection Scope -->
+        <div style="display: flex; justify-content: space-between; margin: 2rem 0; padding: 0 2rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+          <div style="text-align: center; flex: 1; margin-right: 2rem;">
+            <div style="width: 100%; height: 6px; background: var(--accent); border-radius: 3px; margin-bottom: 1rem;"></div>
+            <p style="font-size: 1rem; color: var(--accent); font-weight: 600; margin-bottom: 0.5rem;">BROADER PROTECTION</p>
+            <!-- <p style="font-size: 0.9rem; color: var(--muted); margin: 0;">If you take out a character/theme, etc. Still protected.</p> -->
+          </div>
+          <div style="text-align: center; flex: 1; margin-left: 2rem;">
+            <div style="width: 100%; height: 6px; background: var(--accent2); border-radius: 3px; margin-bottom: 1rem;"></div>
+            <p style="font-size: 1rem; color: var(--accent2); font-weight: 600; margin-bottom: 0.5rem;">NARROWER PROTECTION</p>
+            <!-- <p style="font-size: 0.9rem; color: var(--muted); margin: 0;"></p> -->
+          </div>
+        </div>
+        
+        <!-- Key Principle -->
+        <div style="text-align: center; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+          <p style="font-size: 2rem; color: var(--warn); font-weight: 600; margin-top: 0;">Key Idea</p>
+          <p style="margin: 0; font-size: 1.5rem;">The more creative and original a work, with many sub-parts that are independently copyrightable, the "thicker" its copyright protection. For example, in a novel, the characters, individual chapters, plot lines, might be copyrightable. You divide the book up and it has pieces that can be independently protected. On the other hand, if you have a textbook, news article, or software, the functional components or the facts might not be protected and as a result mostly the verbatim expression is protected, but others can use subcomponents more easily.</p>
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Thick copyright applies to highly creative works with substantial originality.</li>
+        <li>Thin copyright applies to functional works, facts, and minimal creative elements.</li>
+        <li>This distinction is crucial for understanding what aspects of software are protectable.</li>
+        <li>Algorithms and functional aspects of software typically receive thin or no protection.</li>
+      </ul></div>
+    </section>
+
+
+  
+
+    <!-- West Originality Opinion with Headnote Examples -->
+    <section class="slide">
+      <h1>Thomson Reuters v. Ross Intelligence (2025)</h1>
+      <div class="kicker">West Headnotes & Originality</div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+        
+          
+          <div style="display: grid; grid-template-columns: 1fr 500px; gap: 2rem; align-items: start;">
+            <!-- Facts Description -->
+            <div style="font-size: 1.5rem;">
+              <h4 style="color: var(--ok); margin-bottom: 1.5rem; font-size: 3rem;">Key Facts of the Case</h4>
+                <strong>Thomson Reuters</strong>, the owner of the Westlaw legal research platform, sued <strong>Ross Intelligence</strong>, an AI-powered legal research startup. Ross contracted out a data annotation firm to create "headnotes"—brief summaries of key legal points from court opinions—to train their artificial intelligence system. The firm, instead based their annotations off of Westlaw's headnotes. Thomson Reuters sued Ross for copyright infringement. Under dispute is both whether the headnotes are copyrightable and whether Ross's use of them is fair use.
+            </div>
+            
+            <!-- Case Image -->
+            <div style="text-align: center;">
+              <img src="../headnotes.png" 
+                   alt="Westlaw headnotes example" 
+                   style="height: 500px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+              <p style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--fg-secondary); font-style: italic;">Gemini-generated cartoon based on these facts</p>
+            </div>
+          </div>
+      
+        
+        <!-- Key Facts Section -->
+
+      </div>
+
+    </section>
+
+
+    <!-- West Originality Opinion with Headnote Examples -->
+    <section class="slide">
+      <h1>Thomson Reuters v. Ross Intelligence (2025)</h1>
+      <div class="kicker">West Headnotes & Originality</div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+        
+          
+          
+        <!-- Originality Definition in Center -->
+        <div style="text-align: center; margin: 2rem 0; padding: 2rem; background: rgba(255, 255, 255, 0.1);">
+          <h3 style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.4rem;">Example Headnote </h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; align-items: center;">
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 8px;">
+              <h4 style="color: var(--accent2); margin-bottom: 1rem; font-size: 1rem;">Question</h4>
+              <p style="font-style: italic; font-size: 0.95rem;">"Does originality for copyright purposes mean that the work was independently created and has some minimal degree of creativity?"</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 8px;">
+              <h4 style="color: var(--accent2); margin-bottom: 1rem; font-size: 1rem;">West Headnote</h4>
+              <p style="font-style: italic; font-size: 0.95rem;">"Originality, for copyright purposes, means that the work was independently created and has some minimal degree of creativity."</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 8px;">
+              <h4 style="color: var(--accent2); margin-bottom: 1rem; font-size: 1rem;">Case Opinion</h4>
+              <p style="font-style: italic; font-size: 0.95rem;">"Original, as the term is used in copyright, means only that the work was independently created by the author (as opposed to copied from other works), and that it possesses at least some minimal degree of creativity."</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Panel Question Section -->
+        <div style="text-align: center; margin: 2rem 0; padding: 2rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+          <h3 style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.4rem;">Panel Question: Are West Headnotes Copyrightable?</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+            <div style="background: rgba(76, 175, 80, 0.2); padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4CAF50;">
+              <h4 style="color: #4CAF50; margin-bottom: 1rem; font-size: 1.1rem;">✓ Arguments FOR Copyrightability?</h4>
+              <ul style="text-align: left; font-size: 0.95rem; line-height: 1.5; margin: 0; padding-left: 1.2rem;">
+
+              </ul>
+            </div>
+            <div style="background: rgba(244, 67, 54, 0.2); padding: 1.5rem; border-radius: 8px; border-left: 4px solid #F44336;">
+              <h4 style="color: #F44336; margin-bottom: 1rem; font-size: 1.1rem;">✗ Arguments AGAINST Copyrightability?</h4>
+              <ul style="text-align: left; font-size: 0.95rem; line-height: 1.5; margin: 0; padding-left: 1.2rem;">
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Key Facts Section -->
+
+      </div>
+
+    </section>
+
+    <section class="slide">
+      <h1>Question</h1>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 3rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; min-height: 40vh; text-align: center;">
+        <h2 style="color: var(--accent); font-size: 2.5rem; margin: 0 auto;">Why would this matter for AI? Think to the technical details of AI training.</h2>
+      </div>
+      
+    </section>
+  
+    <!-- 8 -->
+    <section class="slide">
+      <h1>Additional Exceptions to Copyrightability</h1>
+      <div class="kicker">What's NOT protected</div>
+      
+      <div class="two-col">
+        <div>
+          <h3 style="color: var(--accent); margin-bottom: 1rem;">Scènes à Faire</h3>
+          <p style="margin-bottom: 1rem;">Standard, obligatory scenes that flow naturally from basic situations</p>
+          <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            <p style="font-size: 0.9rem; font-style: italic; margin-bottom: 1rem;">"A detective story must have a crime, suspects, and clues"</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Paget_holmes.png" alt="Sherlock Holmes illustration by Sidney Paget" style="height: 400px; border-radius: 8px; display: block; margin: 0 auto;">
+          </div>
+          <p style="font-size: 0.9rem; color: var(--muted);"><strong>Case:</strong> <em>Cain v. Universal Pictures Co.</em> (1942) - Court held that standard dramatic situations are not copyrightable as scènes à faire</p>
+        </div>
+        <div>
+          <h3 style="color: var(--accent2); margin-bottom: 1rem;">Public Domain</h3>
+          <p style="margin-bottom: 1rem;">Works no longer protected by copyright</p>
+          <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            <p style="font-size: 0.9rem; font-style: italic; margin-bottom: 1rem;">"Steamboat Willie" (1928) - Mickey Mouse entered public domain in 2024</p>
+            <video id="steamboat-video" controls autoplay muted loop style="width: 100%; height: 400px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto;">
+              <source src="https://ia801602.us.archive.org/23/items/steamboat-willie-mickey/01%20-%20Steamboat%20Willie.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--muted);"><strong>Examples:</strong> Works created before 1927, government works, works with expired copyrights</p>
+        </div>
+      </div>
+      
+
+    </section>
+
+    <!-- 8 -->
+    <section class="slide">
+      <h1>Non-Human Authorship</h1>
+      <div class="kicker">The human authorship requirement and Naruto v. Slater (2018)</div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Macaca_nigra_self-portrait_large.jpg/1280px-Macaca_nigra_self-portrait_large.jpg" alt="Crested macaque selfie" style="max-width: 100%; height: 320px; object-fit: cover; border-radius: 10px; box-shadow: 0 2px 16px rgba(0,0,0,0.25);">
+          <div class="credit" style="font-size: 0.85rem; margin-top: 0.5rem;">
+            Photo: David J Slater / Wikimedia Commons (<a href="https://commons.wikimedia.org/wiki/File:Macaca_nigra_self-portrait_large.jpg" style="color: var(--accent2); text-decoration: underline;" target="_blank" rel="noopener">link</a>)
+          </div>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--warn);">
+          <p style="margin-bottom: 1rem;">A crested macaque named Naruto took a selfie using photographer David Slater's camera. The monkey's "selfie" went viral, and PETA sued on behalf of Naruto, claiming the monkey owned the copyright. 
+          The Ninth Circuit held that animals cannot own copyrights because copyright law requires human authorship.           <a href="https://cases.justia.com/federal/appellate-courts/ca9/16-15469/16-15469-2018-04-23.pdf" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">
+            [Case Opinion Link]
+          </a></p>
+        </div>
+        
+      </div>
+
+    </section>
+
+    <section class="slide">
+      <h1>Question</h1>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 2rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); text-align: center;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; align-items: center; margin-bottom: 3rem;">
+          <div style="text-align: center;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Macaca_nigra_self-portrait_large.jpg/400px-Macaca_nigra_self-portrait_large.jpg" alt="Naruto the macaque selfie" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 4px solid var(--accent);">
+            <div style="font-size: 1.2rem; margin-top: 1rem; color: var(--accent);">🐵 Naruto</div>
+          </div>
+          <div style="text-align: center; font-size: 3rem; color: var(--accent2);">
+            VS
+          </div>
+          <div style="text-align: center;">
+            <img src="https://static.vecteezy.com/system/resources/previews/021/059/827/non_2x/chatgpt-logo-chat-gpt-icon-on-white-background-free-vector.jpg" alt="AI generated art example" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 4px solid var(--accent2); filter: hue-rotate(180deg) saturate(1.5);">
+            <div style="font-size: 1.2rem; margin-top: 1rem; color: var(--accent2);">🤖 AI</div>
+          </div>
+        </div>
+        <h2 style="color: var(--accent); margin-bottom: 2rem; font-size: 1.8rem;">What's different about Naruto taking a photo versus an AI generating content?</h2>
+        <div style="background: rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 8px; font-size: 1.2rem; margin-bottom: 2rem;">
+          <p style="margin: 0; color: var(--warn);">⚠️ What problems could arise from loosening the human authorship requirement to allow AI to be the author?</p>
+        </div>
+      </div>
+      
+    </section>
+
+    <!-- New slides from images -->
+    <section class="slide">
+      <h1>The Copyright Office's Position on AI</h1>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0;">
+        <div style="text-align: center;">
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <div style="
+              width: 300px;
+              height: 300px;
+              border-radius: 50%;
+              overflow: hidden;
+              border: 4px solid var(--accent);
+              background: rgba(255,255,255,0.15);
+              box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+              <img src="https://www.billboard.com/wp-content/uploads/2023/01/US-Copyright-Office-Seal-2023-billboard-1548.jpg?w=1024" alt="U.S. Copyright Office Seal" style="width: 120%; height: 120%; object-fit: cover; border-radius: 50%;">
+            </div>
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Zarya_of_the_Dawn_cover.webp/500px-Zarya_of_the_Dawn_cover.webp.png" 
+              alt="Zarya of the Dawn comic cover" 
+              style="
+                width: 250px; 
+                object-fit: cover; 
+                border-radius: 12px; 
+                margin-left: 2.5rem; 
+                margin-right: 0.5rem;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.18); 
+                border: 3px solid var(--accent2);
+                display: inline-block;
+                vertical-align: middle;
+              "
+            >
+
+          </div>
+        </div>
+        <div style="font-size: 1.4rem; line-height: 1.6;">
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--accent);">
+              <strong style="color: var(--accent);">Author must be human</strong>
+            </li>
+            <li style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--accent);">
+              <strong style="color: var(--accent);">When GenAI in the loop, human must exert creative control and they get copyright in aspects of the work they created</strong>
+            </li>
+            <li style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--accent);">
+              <strong style="color: var(--accent);">Emphasis on non-determinism of GenAI outputs being a problem</strong>
+            </li>
+            <li style="padding: 1rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--accent);">
+              <strong style="color: var(--accent);">In practice, compilation right if authors have edited model outputs significantly. Pretty much not copyrightable, if only prompt-based inputs without editing.</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel Question: Model Weights Copyrightability -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem; text-align: center;">
+          
+          <h1 style="
+            font-size: clamp(2.5rem, 5vw, 4rem); 
+            font-weight: 900; 
+            line-height: 1.2; 
+            color: var(--accent); 
+            margin-bottom: 3rem; 
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          ">
+            Panel Question
+          </h1>
+          
+          <div style="
+            background: rgba(0, 0, 0, 0.7); 
+            padding: 4rem; 
+            border-radius: 16px; 
+            margin: 2rem 0; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          ">
+            <h2 style="
+              font-size: clamp(2rem, 4vw, 3rem); 
+              font-weight: 700; 
+              line-height: 1.3; 
+              color: var(--warn); 
+              margin: 0;
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              Under the Copyright Office's standard, and everything you know so far, do you think that model weights are copyrightable?
+            </h2>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This question builds on the Copyright Office's human authorship requirement.</li>
+        <li>Consider the originality and fixation requirements from § 102.</li>
+        <li>Think about whether model weights are the result of human creative expression.</li>
+        <li>Consider the role of training data, algorithms, and human choices in model creation.</li>
+        <li>This ties together concepts of authorship, originality, and the nature of AI systems.</li>
+        <li>Good opportunity to discuss the intersection of technical and legal concepts.</li>
+      </ul></div>
+    </section>
+
+    <section class="slide">
+      <h1>Alternative to Strict Human Authorship: "Dominant Author" or "Lion's Share" test</h1>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0;">
+        <div style="text-align: center;">
+          <img src="thaler_brief_page1-01.png" alt="First page of Thaler v. Perlmutter Amici Curiae Brief" style="width: 100%; max-width: 600px; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+        </div>
+        <div style="font-size: 1.2rem; line-height: 1.6;">
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 8px; border-left: 4px solid var(--accent); margin-bottom: 2rem;">
+            <h3 style="color: var(--accent); margin-bottom: 1rem;">"Lion's share" test as an alternative</h3>
+            <p style="margin-bottom: 1rem;">Still requires disentangling human contribution to identify if they actually contributed a Lion's Share</p>
+          </div>
+          
+          <div style="background: rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 8px; border-left: 4px solid var(--accent2);">
+            <h3 style="color: var(--accent2); margin-bottom: 1rem;">Alternative: "Dominant Author"</h3>
+            <p style="margin-bottom: 0;">Another alternative is to consider "dominant author," like in disputes between directors and producers.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: var(--muted);">See, e.g., 16 Casa Duce LLC v. Merkin; Garcia v. Google.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1>But what about legitimate human contributions to AI-generated works on the input side?</h1>
+      
+      <div style="margin: 3rem 0;">
+        <div style="position: relative; text-align: center; margin-bottom: 3rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div style="text-align: center; flex: 1;">
+              <h3 style="color: var(--accent); margin-bottom: 1rem;">Pretraining Methodology</h3>
+            </div>
+            <div style="text-align: center; flex: 1;">
+              <h3 style="color: var(--accent2); margin-bottom: 1rem;">Fine-tuning/Alignment</h3>
+            </div>
+            <div style="text-align: center; flex: 1;">
+              <h3 style="color: var(--warn); margin-bottom: 1rem;">In-context Prompting</h3>
+            </div>
+            <div style="text-align: center; flex: 1;">
+              <h3 style="color: var(--ok); margin-bottom: 1rem;">Memorized data</h3>
+            </div>
+          </div>
+          
+          <div style="position: relative; height: 60px; background: linear-gradient(90deg, var(--accent), var(--accent2), var(--warn), var(--ok)); border-radius: 30px; margin: 2rem 0;">
+            <!-- Arrows removed as requested -->
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <div style="text-align: left; flex: 1;">
+              <span style="font-size: 1rem; color: var(--muted);">Less Influence</span>
+            </div>
+            <div style="flex: 2;"></div>
+            <div style="text-align: right; flex: 1;">
+              <span style="font-size: 1rem; color: var(--muted);">More Influence</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1>Is it actual influence? Understanding "attempts" to control outputs.</h1>
+      
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: center; margin: 3rem 0;">
+        <div style="text-align: center;">
+          <img src="../mario.png" alt="Generic plumber" style="width: 250px; height: 250px; object-fit: contain;">
+          <div style="margin-top: 1rem; font-size: 1.1rem; font-style: italic; color: var(--muted);">
+            "A generic plumber that's not in a video game." by Playground 2.5
+          <div style="margin-top: 1.5rem; font-size: 0.95rem; color: var(--muted);">
+            See: 
+            <a href="https://arxiv.org/abs/2406.14526" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">
+              Fantastic Copyrighted Beasts and How (Not) to Generate Them
+            </a>
+            <br>
+            <span style="font-size: 0.9em;">
+              Luxi He, Yangsibo Huang, Weijia Shi, Tinghao Xie, Haotian Liu, Yue Wang, Luke Zettlemoyer, Chiyuan Zhang, Danqi Chen, Peter Henderson
+            </span>
+          </div>
+          </div>
+        </div>
+        
+        <div style="font-size: 1.2rem; line-height: 1.6;">
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--warn);">
+              <strong style="color: var(--warn);">Models don't always really pay attention to prompt instructions.</strong>
+            </li>
+            <li style="padding: 1.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid var(--bad);">
+              <strong style="color: var(--bad);">Even worse, some diffusion model APIs silently cut off prompt after 77 tokens, so it doesn't even reach the model. So claims of a long-detailed prompt being copyrightable might be misleading.</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reformatted as a question slide -->
+    <section class="slide">
+      <h1>Panel Question</h1>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.2rem; line-height: 1.7; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); text-align: center;">
+        <h2 style="color: var(--accent); margin-bottom: 2rem;">Are there technical methods to quantify human contributions to operationalize the "lion's share" test? Do you think they would work for court cases?</h2>
+       
+      </div>
+    </section>
+
+
+
+    <section class="slide">
+      <h1>II. Rights, Claims, Remedies, and Defenses</h1>
+      <h2 style="color: var(--accent2); margin-top: 2rem;">What can you do with copyrighted material?</h2>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" style="flex-direction: row; align-items: center; gap: 4rem;">
+      <div style="flex: 1;">
+        <h1 class="big">TBs of Training Data</h1>
+        <h2>Books • Articles • Websites • Code • Social Media</h2>
+        <p class="accent big">Most of it is copyrighted. So what could go wrong?</p>
+      </div>
+      <div style="flex: 1; display: flex; justify-content: center; position: relative;">
+        <img style="max-width: 100%; max-height: 70vh; object-fit: contain;" alt="Machine learning xkcd comic" src="https://www.explainxkcd.com/wiki/images/d/d3/machine_learning.png"/>
+        <div class="credit" style="position: absolute; bottom: -2rem; right: 0;">Image: xkcd (machine learning)</div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide">
+      <img alt="Map of Copyright Litigation vs AI companies in United States" src="https://i0.wp.com/chatgptiseatingtheworld.com/wp-content/uploads/2025/09/Map-of-Copyright-Litigation-v.-AI-companies-in-United-States-50-Sept-8-2025.jpg?resize=2048%2C1152&ssl=1"/>
+      <div class="overlay">
+        <h1 style="color: var(--accent);">50 lawsuits in the United States alone <span style="font-size: 1.5rem; color: var(--accent2); font-weight: 400;">(and more internationally)</span></h1>
+      </div>
+      <div class="credit">Image: ChatGPT is Eating the World (copyright litigation map)</div>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide">
+      <h1>Exclusive Rights (17 U.S.C. §106)</h1>
+      <div class="kicker"><a href="https://www.law.cornell.edu/uscode/text/17/106" target="_blank" style="color: var(--accent); text-decoration: none;">Read the Full Statute</a></div>
+      
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.1rem; line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); max-height: 70vh; overflow-y: auto;">
+        <p style="margin: 0 0 1.5rem 0; text-align: justify; font-weight: 600;">
+          Subject to sections 107 through 122, the owner of copyright under this title has the exclusive rights to do and to authorize any of the following:
+        </p>
+        
+        <ol style="margin: 0; padding-left: 1.5rem; font-size: 1rem;">
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">to </span>
+            <span style="color: var(--accent); font-weight: 600;">reproduce</span>
+            <span style="font-weight: 600; color: var(--fg);"> the copyrighted work in copies or phonorecords;</span>
+          </li>
+          
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">to prepare </span>
+            <span style="color: var(--accent2); font-weight: 600;">derivative works</span>
+            <span style="font-weight: 600; color: var(--fg);"> based upon the copyrighted work;</span>
+          </li>
+          
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">to </span>
+            <span style="color: var(--warn); font-weight: 600;">distribute</span>
+            <span style="font-weight: 600; color: var(--fg);"> copies or phonorecords of the copyrighted work to the public by sale or other transfer of ownership, or by rental, lease, or lending;</span>
+          </li>
+          
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">in the case of literary, musical, dramatic, and choreographic works, pantomimes, and motion pictures and other audiovisual works, to </span>
+            <span style="color: var(--muted); font-weight: 600;">perform</span>
+            <span style="font-weight: 600; color: var(--fg);"> the copyrighted work publicly;</span>
+          </li>
+          
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">in the case of literary, musical, dramatic, and choreographic works, pantomimes, and pictorial, graphic, or sculptural works, including the individual images of a motion picture or other audiovisual work, to </span>
+            <span style="color: #ff6b6b; font-weight: 600;">display</span>
+            <span style="font-weight: 600; color: var(--fg);"> the copyrighted work publicly; and</span>
+          </li>
+          
+          <li style="margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--fg);">in the case of sound recordings, to </span>
+            <span style="color: #4ecdc4; font-weight: 600;">perform</span>
+            <span style="font-weight: 600; color: var(--fg);"> the copyrighted work publicly by means of a digital audio transmission.</span>
+          </li>
+        </ol>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Use §106 as a checklist when evaluating features or datasets.</li>
+        <li>Rights are limited by §107–§122 (fair use, libraries, etc.).</li>
+        <li>Link takes students directly to the Cornell Law source.</li>
+      </ul></div>
+    </section>
+        <!-- 14 -->
+        <section class="slide">
+          <h1>Registration</h1>
+          <ul>
+            <li>Registration not required for protection—but needed to sue (<em>submit the work to Copyright Office</em>).</li>
+            <li>Statutory damages/fees only if timely registration (<a href="https://www.law.cornell.edu/uscode/text/17/412" target="_blank" rel="noopener">§412</a>), otherwise have to prove actual damages.</li>
+            <li>Notice © optional post‑1989 but still helpful.</li>
+          </ul>
+          <div class="notes"><h3>Speaker Notes</h3><ul>
+            <li>Timely = before infringement begins or within 3 months of first publication (but some weirdness in doctrine right now).</li>
+          </ul></div>
+        </section>
+    
+    <!-- 15 -->
+    <section class="slide">
+      <div class="overlay"></div>
+      <h1>Copyright Remedies</h1>
+      <div class="two-col" style="margin-top: 3rem; gap: 3rem;">
+        <style>
+          .two-col ul li {
+            font-size: 1.5rem !important;
+          }
+        </style>
+        <div>
+          <h2 class="accent" style="font-size: 3rem;">⚖️ Direct Infringement</h2>
+          <ul>
+            <li>Actual copying of protected work</li>
+            <li>Violates one of the §106 exclusive rights</li>
+            <li>Strict liability (no intent required), but there is a "volition" consideration.               See <a href="https://cardozolawreview.com/wp-content/uploads/2018/08/DENICOLA.37.4.pdf" target="_blank" rel="noopener">Denicola 2018.</a>
+            </li>
+            <li>Owner has burden to prove copying + improper appropriation</li>
+
+          </ul>
+        </div>
+        <div>
+          <h2 class="warn" style="font-size: 3rem;">🔗 Secondary Infringement</h2>
+          <ul style="font-size: 2rem;">
+            <li><strong>Contributory:</strong> Knowledge + material contribution</li>
+            <li><strong>Vicarious:</strong> Right/ability to control + financial benefit</li>
+            <li>Applies to platforms, services, intermediaries</li>
+            <li>DMCA safe harbors may provide protection</li>
+          </ul>
+        </div>
+      </div>
+      <div class="credit">Image: Unsplash (scales of justice)</div>
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Direct infringement: straightforward copying, distribution, public performance, etc.</li>
+        <li>Secondary liability crucial for AI/tech platforms—when are you liable for users' infringement?</li>
+        <li>Contributory: classic example is Napster—knew users were infringing, provided the tools.</li>
+        <li>Vicarious: don't need knowledge if you profit and can control the infringement.</li>
+        <li>DMCA safe harbors (§512) protect platforms that follow takedown procedures.</li>
+      </ul></div>
+    </section>
+
+
+    <!-- 16 -->
+    <section class="slide">
+      <!-- <img class="cover" alt="Scales of justice" src="https://images.unsplash.com/photo-1589391886645-d51941baf7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2025&q=80"/> -->
+      <!-- <div class="overlay"></div> -->
+      <h1>Fair Use (17 U.S.C. §107)</h1>
+      <div class="kicker">The Four-Factor Test</div>
+
+      <div class="two-col" style="margin-top: 3rem; gap: 3rem;">
+        <style>
+          .two-col ul li {
+            font-size: 1.5rem !important;
+          }
+        </style>
+        <div>
+          <h2 class="accent">⚖️ Factor 1: Purpose</h2>
+          <p>Commercial vs. educational, transformative use</p>
+          <h2 class="accent2">📚 Factor 2: Nature</h2>
+          <p>Creative vs. factual, published vs. unpublished</p>
+        </div>
+        <div>
+          <h2 class="warn">📏 Factor 3: Amount</h2>
+          <p>How much was used, qualitative importance</p>
+          <h2 class="bad">💰 Factor 4: Market Effect</h2>
+          <p>Impact on original work's market value</p>
+        </div>
+      </div>
+      <div class="credit">Image: Unsplash (scales of justice)</div>
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Multi‑factor, case‑by‑case. Modern anchors: <em>Google v. Oracle</em>; <em>Warhol v. Goldsmith</em>.</li>
+        <li>Visual representation helps students remember the four factors.</li>
+        <li>Each factor gets its own icon and color for better retention.</li>
+      </ul></div>
+    </section>
+
+    <!-- 16.5 - Harper & Row v. Nation Enterprises Case Study -->
+    <section class="slide">
+      <h1>Harper & Row v. Nation Enterprises (1985)</h1>
+      <div class="kicker">Fair Use Case Study</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Harper case diagram -->
+        <div style="text-align: center;">
+          <img src="../harper.png" 
+               alt="Harper & Row v. Nation Enterprises case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="fair-use-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="fair-use-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The Supreme Court held that The Nation's use was NOT fair use. Even though only 200-400 words were used from a 200,000+ word manuscript, these words were the "heart of the book" - the most newsworthy and commercially valuable portions. The court emphasized that quality matters more than quantity in fair use analysis.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case established that taking the "heart" of a work, even if small in quantity, can defeat fair use.</li>
+        <li>Demonstrates that Factor 3 (amount used) looks at qualitative as well as quantitative taking.</li>
+        <li>Relevant to AI training on high-value, creative content.</li>
+      </ul></div>
+    </section>
+
+    <!-- Google Books Case -->
+    <section class="slide">
+      <h1>Authors Guild v. Google (2015)</h1>
+      <div class="kicker">Google Books Fair Use Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../gbooks.png" 
+               alt="Google Books case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="google-books-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="google-books-answer" style="display: none; text-align: center; background: rgba(34, 197, 94, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--ok);">
+            <h3 style="color: var(--ok); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: YES</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The Second Circuit ruled that Google's digitization and snippet display constituted fair use. The court found the use was highly transformative, serving a different purpose than the original works, and provided significant public benefits without harming the market for the original books.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case established that large-scale digitization can be fair use when transformative.</li>
+        <li>Demonstrates how Factor 1 (purpose) can favor fair use for public benefit.</li>
+        <li>Relevant to AI training on large datasets for research purposes.</li>
+      </ul></div>
+    </section>
+
+    <!-- Axanar Case -->
+    <section class="slide">
+      <h1>Paramount v. Axanar Productions (2017)</h1>
+      <div class="kicker">Star Trek Fan Film Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../axanar.png" 
+               alt="Axanar Star Trek fan film case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="axanar-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="axanar-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The court ruled that Axanar's fan film was NOT fair use. The film closely adhered to Star Trek canon and characters, was commercial in nature, and could potentially harm the market for authorized Star Trek content. The case settled before trial.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case shows the limits of fan works and derivative content.</li>
+        <li>Demonstrates how Factor 4 (market effect) can defeat fair use for commercial fan works.</li>
+        <li>Relevant to AI-generated content that closely mimics existing franchises.</li>
+      </ul></div>
+    </section>
+
+    <!-- Harry Potter Lexicon Case -->
+    <section class="slide">
+      <h1>Warner Bros. v. RDR Books (2008)</h1>
+      <div class="kicker">Harry Potter Lexicon Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../harrypotterlexicon.png" 
+               alt="Harry Potter Lexicon case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="harry-potter-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="harry-potter-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The court ruled that the Harry Potter Lexicon was NOT fair use. While reference works can be fair use, this lexicon copied too much creative expression and could serve as a market substitute for authorized companion books. J.K. Rowling was awarded damages.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case shows the limits of reference works and companion books.</li>
+        <li>Demonstrates how Factor 4 (market effect) can defeat fair use even for reference materials.</li>
+        <li>Relevant to AI-generated summaries or companion content.</li>
+      </ul></div>
+    </section>
+
+    <!-- Boldly Go Case -->
+    <section class="slide">
+      <h1>Dr. Seuss v. ComicMix (2019)</h1>
+      <div class="kicker">"Boldly Go" Mashup Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../boldlygo.png" 
+               alt="Boldly Go Dr Seuss Star Trek mashup case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="boldly-go-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="boldly-go-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The Ninth Circuit ruled that "Oh, the Places You'll Boldly Go!" was NOT fair use. The court found it was not sufficiently transformative as a parody and borrowed too extensively from Dr. Seuss's original work, including distinctive artistic style and substantial text.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case shows the limits of mashup and parody works.</li>
+        <li>Demonstrates how Factor 1 (purpose) and Factor 3 (amount) can defeat fair use.</li>
+        <li>Relevant to AI-generated mashups or derivative works.</li>
+      </ul></div>
+    </section>
+
+    <!-- Warhol Case -->
+    <section class="slide">
+      <h1>Warhol Foundation v. Goldsmith (2023)</h1>
+      <div class="kicker">Andy Warhol Prince Portrait Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../warhol.png" 
+               alt="Warhol Prince portrait fair use case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="warhol-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="warhol-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The Supreme Court ruled that Warhol's Prince series was NOT fair use. The Court emphasized that "transformative" isn't magic - both works served similar purposes (portraits of Prince) and competed in the same market. This case significantly narrowed transformative use.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This landmark case significantly narrowed the transformative use doctrine.</li>
+        <li>Demonstrates how Factor 1 (purpose) and Factor 4 (market effect) work together.</li>
+        <li>Highly relevant to AI art and style transfer applications.</li>
+      </ul></div>
+    </section>
+
+    <!-- 2K Interactive Tattoo Case -->
+    <section class="slide">
+      <h1>Solid Oak Sketches v. 2K Games (2020)</h1>
+      <div class="kicker">NBA 2K Tattoo Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="../2kinteractivetattoo.png" 
+               alt="2K Interactive NBA tattoo fair use case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="2k-tattoo-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="2k-tattoo-answer" style="display: none; text-align: center; background: rgba(34, 197, 94, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--ok);">
+            <h3 style="color: var(--ok); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: YES</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The court ruled that 2K's use of player tattoos was fair use. The tattoos were de minimis (incidental and small), served a different purpose than the original tattoo art, and did not harm the market for tattoo designs. The court emphasized the tattoos were not the focus of the game.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case established de minimis use principles for incidental copyrighted elements.</li>
+        <li>Demonstrates how Factor 3 (amount) can favor fair use for incidental uses.</li>
+        <li>Relevant to AI-generated content with incidental copyrighted elements.</li>
+      </ul></div>
+    </section>
+
+    <!-- Alexander v. Take-Two Case -->
+    <section class="slide">
+      <h1>Alexander v. Take-Two Interactive (2022)</h1>
+      <div class="kicker">WWE 2K Tattoo Case - Different Outcome</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="https://copyrightlately.com/wp-content/uploads/2022/09/Copyright-Tattoo-Trial-Post-Graphic-1.png" 
+               alt="Alexander v. Take-Two WWE tattoo copyright case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="alexander-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Fair Use?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="alexander-answer" style="display: none; text-align: center; background: rgba(139, 69, 19, 0.3); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--bad);">
+            <h3 style="color: var(--bad); font-size: 2rem; margin-bottom: 1rem;">Court's Answer: NO</h3>
+            <p style="font-size: 1.2rem; line-height: 1.5; margin: 0;">The jury ruled that Take-Two's use of Catherine Alexander's tattoos on Randy Orton in WWE 2K was NOT fair use. Unlike the NBA 2K case, the court found the tattoos were prominently displayed and served the same decorative function in the game as in real life. Alexander was awarded $3,750 in damages.</p>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case contrasts with the NBA 2K tattoo case, showing different outcomes for similar issues.</li>
+        <li>Demonstrates how prominence and purpose of use can affect fair use analysis.</li>
+        <li>Shows the importance of case-by-case analysis in fair use determinations.</li>
+        <li>Relevant to AI-generated content that prominently features copyrighted elements.</li>
+      </ul></div>
+    </section>
+
+    <!-- Kadrey v. Meta Case -->
+    <section class="slide">
+      <h1>Kadrey v. Meta Platforms (2023)</h1>
+      <div class="kicker">AI Training Data Fair Use Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="https://media.istockphoto.com/id/1201041782/photo/alpaca.jpg?s=612x612&w=0&k=20&c=aHFfLZMuyEyyiJux4OghXfdcc40Oa6L7_cE0D7zvbtY=" 
+               alt="Kadrey v. Meta AI training copyright case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="kadrey-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Facts?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="kadrey-answer" style="display: none; text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Court's conclusion?</div>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case established that AI training can be transformative fair use.</li>
+        <li>Demonstrates how Factor 1 (purpose) can favor fair use for AI development.</li>
+        <li>Shows the importance of proving market harm in fair use analysis.</li>
+        <li>Highly relevant to current AI training data disputes.</li>
+      </ul></div>
+    </section>
+
+    <!-- Bartz v. Anthropic Case -->
+    <section class="slide">
+      <h1>Bartz v. Anthropic (2023)</h1>
+      <div class="kicker">AI Training Data Settlement Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="https://www.cnet.com/a/img/resize/f29894a5c237551e372d5b2403cd4752e31edeaa/hub/2025/06/12/19cf8359-6b5b-4ee4-a189-7c6b24d4c2a0/claude-logo-and-app.jpg?auto=webp&fit=crop&height=675&width=1200" 
+               alt="Bartz v. Anthropic AI training copyright case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="bartz-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Facts?</div>
+          </div>
+          
+          <!-- Answer (initially hidden) -->
+          <div id="bartz-answer" style="display: none; text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Court's conclusion?</div>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case shows the importance of lawful data acquisition for AI training.</li>
+        <li>Demonstrates how data source legality affects fair use analysis.</li>
+        <li>Shows the distinction between lawful and pirated training data.</li>
+        <li>Relevant to AI companies' data acquisition practices.</li>
+      </ul></div>
+    </section>
+
+    <!-- UMG v. Anthropic Case -->
+    <section class="slide">
+      <h1>UMG v. Anthropic (2023)</h1>
+      <div class="kicker">Music Industry AI Training Case</div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin: 3rem 0; height: 60vh;">
+        
+        <!-- Left side: Case image -->
+        <div style="text-align: center;">
+          <img src="https://www.cnet.com/a/img/resize/f29894a5c237551e372d5b2403cd4752e31edeaa/hub/2025/06/12/19cf8359-6b5b-4ee4-a189-7c6b24d4c2a0/claude-logo-and-app.jpg?auto=webp&fit=crop&height=675&width=1200" 
+               alt="UMG v. Anthropic music AI training copyright case diagram" 
+               style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        </div>
+        
+        <!-- Right side: Question and answer (initially hidden) -->
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+          
+          <!-- Question (always visible) -->
+          <div id="umg-question" style="text-align: center; background: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+            <div style="color: var(--accent2); font-size: 2.5rem; font-weight: 600;">Differentiator: Claude actually output some lyrics (versus in Bartz where Claude did not). Anthropic claims this is a bug. Are you convinced? Should this change the outcome?</div>
+          </div>
+          
+        
+          
+        </div>
+        
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Click next to reveal the court's answer about fair use.</li>
+        <li>This case shows the music industry's aggressive stance on AI training.</li>
+        <li>Demonstrates the challenges of proving irreparable harm in AI cases.</li>
+        <li>Shows how preliminary injunctions work in copyright disputes.</li>
+        <li>Highly relevant to ongoing AI music generation disputes.</li>
+      </ul></div>
+    </section>
+
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          <!-- Left side: Question -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(3rem, 6vw, 5rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--warn); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              Can models really output training text?
+            </h1>
+            <div style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 800; 
+              color: var(--accent); 
+              margin: 0;
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              Sometimes.
+            </div>
+          </div>
+          
+          <!-- Right side: Research image -->
+          <div style="text-align: center;">
+            <img src="../regurgitation.png" 
+                 alt="Research showing model regurgitation of training data" 
+                 style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Citation at bottom -->
+      <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center;">
+        <div style="font-size: 1rem; color: var(--muted); font-style: italic;">
+          Peter Henderson, Xuechen Li, Dan Jurafsky, Tatsunori Hashimoto, Mark A Lemley, Percy Liang,<br>
+          <em>Foundation Models and Fair Use</em>, Journal of Machine Learning Research (2023).
+        </div>
+      </div>
+    </section>
+
+    <!-- Fair Use Factors in Foundation Model Cases -->
+    <section class="slide">
+      <h1 style="color: var(--warn); text-align: center; margin-bottom: 3rem;">Weighing fair use factors in foundation model cases?</h1>
+      
+      <div style="display: flex; align-items: center; justify-content: center; margin: 4rem 0;">
+        <!-- Arrow with gradient -->
+        <div style="position: relative; width: 80%; max-width: 900px; height: 120px;">
+          <!-- Main arrow -->
+          <div style="
+            position: absolute; 
+            top: 40%; 
+            left: 0; 
+            right: 0; 
+            height: 60px; 
+            background: linear-gradient(90deg, #f59e0b 0%, var(--accent) 50%, var(--ok) 100%); 
+            clip-path: polygon(0% 50%, 15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          "></div>
+          
+          <!-- Left label -->
+          <div style="position: absolute; left: -120px; top: 50%; transform: translateY(-50%); text-align: right; width: 100px;">
+            <div style="font-size: 1.2rem; font-weight: 700; color: var(--fg); margin-bottom: 0.5rem;">Against fair use</div>
+          </div>
+          
+          <!-- Right label -->
+          <div style="position: absolute; right: -120px; top: 50%; transform: translateY(-50%); text-align: left; width: 100px;">
+            <div style="font-size: 1.2rem; font-weight: 700; color: var(--fg); margin-bottom: 0.5rem;">In favor of fair use</div>
+          </div>
+          
+          <!-- Top annotations -->
+          <div style="position: absolute; top: -60px; left: 10%; transform: translateX(-50%); text-align: center; width: 200px;">
+            <div style="font-size: 1rem; font-weight: 600; color: var(--fg); line-height: 1.3;">
+              Easy regurgitation of training data.
+            </div>
+          </div>
+          
+          <div style="position: absolute; top: -60px; right: 10%; transform: translateX(50%); text-align: center; width: 200px;">
+            <div style="font-size: 1rem; font-weight: 600; color: var(--fg); line-height: 1.3;">
+              More mitigation strategies preventing verbatim regurgitation.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bottom note -->
+      <div style="text-align: center; margin-top: 4rem; padding: 2rem; background: rgba(255, 255, 255, 0.1); border-radius: 12px; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.3rem; font-weight: 600; color: var(--fg); margin: 0; line-height: 1.5;">
+          Key consideration in Google Books were the mitigation strategies in place preventing use of the service as free access to books.
+        </p>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide shows how technical mitigation strategies can influence fair use analysis.</li>
+        <li>References Google Books case where safeguards were crucial to the fair use determination.</li>
+        <li>Demonstrates that fair use isn't just about the four factors, but also about implementation details.</li>
+        <li>Relevant to AI companies implementing technical safeguards against memorization.</li>
+      </ul></div>
+    </section>
+
+    <!-- Non-literal Infringement Challenges -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Message -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 900; 
+              line-height: 1.2; 
+              color: var(--warn); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              Non-literal infringement makes mitigations challenging though
+            </h1>
+          </div>
+          
+          <!-- Right side: Ultraman image -->
+          <div style="text-align: center;">
+            <img src="../ultraman.png" 
+                 alt="Ultraman character showing non-literal similarity concerns" 
+                 style="width: 100%; max-width: 500px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide highlights a key limitation of technical mitigation strategies.</li>
+        <li>While mitigations can prevent verbatim copying, they struggle with non-literal infringement.</li>
+        <li>Non-literal infringement includes substantial similarity in characters, plots, or creative elements.</li>
+        <li>The Ultraman example shows how AI might generate content that's similar in concept but not identical.</li>
+        <li>Technical filters are much better at catching exact matches than conceptual similarities.</li>
+        <li>This creates ongoing challenges for AI companies trying to avoid copyright infringement.</li>
+      </ul></div>
+    </section>
+
+    <!-- Between Labor Protection and IP Rights -->
+    <section class="slide">
+      <div class="overlay"></div>
+      <h1>Between Labor Protection and IP Rights</h1>
+      <div class="kicker">Should We Consider Labor Market Impacts?</div>
+      
+      <div class="two-col">
+        <div>
+          <img src="../tang.png" alt="First page of Xiyin Tang's Intellectual Property as Labor Law" style="width: 100%; max-width: 400px; border: 1px solid #ccc;"/>
+        </div>
+        <div>
+          <img src="../kadrey.png" alt="First page of Authors Guild v OpenAI complaint" style="width: 100%; max-width: 400px; border: 1px solid #ccc;"/>
+        </div>
+      </div>
+      
+      <div class="discussion-box">
+        <h3>Discussion Questions:</h3>
+        <p><strong>What do you think? Should we be considering impacts on labor markets when crafting IP policy?</strong></p>
+        <p>Argue for or against incorporating labor market considerations into intellectual property law.</p>
+      </div>
+      
+    </section>
+
+    <section class="slide">
+      <h1>III. Other Considerations</h1>
+      <h2 style="color: var(--accent2); margin-top: 2rem;">DMCA Safe Harbor and Interaction with Licenses and Contracts</h2>
+    </section>
+
+    <!-- Platforms Question Slide -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          <!-- Left side: Question -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(3rem, 6vw, 5rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--warn); 
+              margin: 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              So why aren't platforms sued endlessly?
+            </h1>
+          </div>
+          
+          <!-- Right side: Reddit comment image -->
+          <div style="text-align: center;">
+            <img src="../reddit_opedcomment.png" 
+                 alt="Reddit comment showing platform liability concerns" 
+                 style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide sets up the DMCA safe harbor discussion by highlighting the practical question.</li>
+        <li>Shows how platforms would be vulnerable without legal protections.</li>
+        <li>The Reddit comment illustrates public awareness of platform liability issues.</li>
+        <li>Transitions naturally into explaining DMCA safe harbors as the solution.</li>
+      </ul></div>
+    </section>
+
+    <!-- Origins of DMCA § 512 -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Title -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(3rem, 6vw, 5rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--accent); 
+              margin: 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              ORIGINS OF DMCA § 512
+            </h1>
+          </div>
+          
+          <!-- Right side: Content -->
+          <div style="padding: 2rem;">
+            <div style="margin-bottom: 2rem;">
+              <h2 style="color: var(--accent2); font-size: 1.8rem; margin-bottom: 1rem; font-weight: 700;">
+                Court in 1995 decided <em>RTC v. Netcom</em>:
+              </h2>
+              <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 1rem; color: var(--fg);">
+                <strong>Facts:</strong> RTC sought to hold Netcom, an Internet access provider, strictly liable for infringement of Scientology texts posted on a bulletin board service (BBS).
+              </p>
+              <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--fg);">
+                <strong>Court's Holding:</strong> Court rejected strict liability theory because it would extend copyright liability too far; only volitional acts by humans trigger copyright's reproduction right. But, after notice, Netcom had a duty to investigate and take down infringing materials.
+              </p>
+              <div style="padding: 1rem; background: var(--accent); color: #000; border-radius: 8px; font-weight: 600; text-align: center;">
+                → This became basis for § 512 safe harbor in the DMCA
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Credit at bottom -->
+      <div style="position: absolute; bottom: 2rem; right: 2rem;">
+        <div style="font-size: 0.9rem; color: var(--muted); font-style: italic;">
+          Credit: <a href="https://www.youtube.com/watch?v=6DdgVaZG4cM" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">Stanford Law Class</a>
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide provides crucial historical context for understanding DMCA safe harbors.</li>
+        <li>RTC v. Netcom (1995) was a foundational case that established key principles later codified in DMCA.</li>
+        <li>Shows how judicial decisions influenced legislative drafting of Section 512.</li>
+        <li>The "volitional acts" requirement from Netcom became central to safe harbor protections.</li>
+        <li>Notice-and-takedown framework originated from this case's holding about contributory infringement.</li>
+      </ul></div>
+    </section>
+    
+    <!-- DMCA Safe Harbor -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Title -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(3rem, 6vw, 5rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--accent); 
+              margin: 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              DMCA Safe Harbor
+            </h1>
+          </div>
+          
+          <!-- Right side: Content -->
+          <div style="padding: 2rem;">
+            <div style="margin-bottom: 2rem;">
+              <h2 style="color: var(--accent); font-size: 1.8rem; margin-bottom: 1rem;">DMCA, in section 512, provides safe harbors for:</h2>
+              <ul style="font-size: 1.2rem; line-height: 1.8; color: var(--fg); margin: 0 0 1.5rem 1.5rem;">
+                <li style="margin-bottom: 0.6rem;"><strong>(a)</strong> Transitory digital network communication</li>
+                <li style="margin-bottom: 0.6rem;"><strong>(b)</strong> System caching</li>
+                <li style="margin-bottom: 0.6rem;"><strong>(c)</strong> Hosting by service providers</li>
+                <li style="margin-bottom: 0.6rem;"><strong>(d)</strong> Search engines</li>
+              </ul>
+              
+              <h2 style="color: var(--accent2); font-size: 1.8rem; margin-bottom: 1rem;">DMCA "Take down": To obtain shelter, the service provider must:</h2>
+              <ul style="font-size: 1.2rem; line-height: 1.8; color: var(--fg); margin: 0 0 0 1.5rem;">
+                <li style="margin-bottom: 0.6rem;">Provide a notification and removal mechanism</li>
+                <li style="margin-bottom: 0.6rem;">Inform users of the take down policy</li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide explains the four main safe harbors provided by DMCA Section 512.</li>
+        <li>Each subsection protects different types of internet service activities.</li>
+        <li>The takedown requirements are key to maintaining safe harbor protection.</li>
+        <li>Most relevant for AI companies are likely (c) hosting and (d) search engine provisions.</li>
+      </ul></div>
+    </section>
+
+    <!-- What about a DMCA for AI? -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Question -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(3rem, 6vw, 5rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--warn); 
+              margin: 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              What about a DMCA for AI?
+            </h1>
+          </div>
+          
+          <!-- Right side: AI Challenges -->
+          <div style="padding: 2rem;">
+            <h2 style="color: var(--warn); font-size: 1.8rem; margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.5rem;">
+              ⚠️ DMCA is unlikely to apply to most AI systems, since AI models are not really platforms.
+            </h2>
+            <ul style="font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace; font-size: 1.15rem; color: var(--warn); margin-bottom: 1.5rem; margin-top: 0;">
+              <li>What do you think are the key challenges in applying DMCA to AI systems?</li>
+              <li>How do you think we could address them?</li>
+            </ul>
+            <ul style="font-size: 1.2rem; line-height: 1.6; color: var(--fg); margin: 0; padding-left: 1.5rem;">
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide highlights the key challenges in applying DMCA to AI systems.</li>
+        <li>Traditional takedown doesn't work well when content is "learned" rather than stored.</li>
+        <li>Unclear how to distinguish between training data use vs. hosting user content.</li>
+        <li>Repeat infringer policies are difficult to implement for AI-generated content.</li>
+        <li>Anti-circumvention issues arise when AI systems bypass content protection measures.</li>
+      </ul></div>
+    </section>
+
+    <!-- Copyright Preemption and Licensing -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Title and content -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--accent); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              Copyright Preemption and Licensing
+            </h1>
+            <p style="font-size: 1.3rem; line-height: 1.6; color: var(--fg); margin: 0;">
+              Earlier we discussed that models might not be copyrightable, but companies nonetheless license them.
+            </p>
+          </div>
+          
+          <!-- Right side: Licenses image -->
+          <div style="text-align: center;">
+            <img src="../licenses.png" 
+                 alt="Various AI model licenses and terms" 
+                 style="width: 250%; max-width: 1200px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>This slide sets up the tension between copyright law and contractual licensing.</li>
+        <li>Even if models aren't copyrightable, companies still try to control them through licenses.</li>
+        <li>This creates interesting legal questions about the enforceability of such licenses.</li>
+        <li>The image shows various licensing schemes used by AI companies.</li>
+      </ul></div>
+    </section>
+
+    
+
+    <!-- Copyright Preemption Problem -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Content -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--warn); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              The Preemption Problem
+            </h1>
+            <p style="font-size: 1.2rem; line-height: 1.6; color: var(--fg); margin-bottom: 1.5rem;">
+              But this creates a problem called <strong style="color: var(--accent);">copyright preemption</strong>. That is: copyright says you shouldn't be able to own this thing, but you try to own it anyways through a contract.
+            </p>
+            <p style="font-size: 1.2rem; line-height: 1.6; color: var(--fg); margin-bottom: 1.5rem;">
+              Since contracts are state law, federal law could preempt (recall our discussion of federalism in the first class). There's a circuit split on this issue, but just know that they might not be enforceable, depending on the facts and the jurisdiction.
+            </p>
+            <div style="font-size: 0.9rem; color: var(--muted); font-style: italic;">
+              See: <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5049562" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">The Mirage of Artificial Intelligence Terms of Use Restrictions</a>
+            </div>
+          </div>
+          
+          <!-- Right side: Meme -->
+          <div style="text-align: center;">
+            <img src="https://i0.wp.com/spicyip.com/wp-content/uploads/2025/01/Screenshot-2025-01-07-at-2.27.06%E2%80%AFPM.png?w=980&ssl=1" 
+                 alt="Meme about copyright preemption and licensing conflicts" 
+                 style="width: 100%; max-width: 500px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Copyright preemption is a complex doctrine that prevents state law from undermining federal copyright policy.</li>
+        <li>When copyright says something shouldn't be protected, contracts can't end-run around that limitation.</li>
+        <li>There's currently a circuit split on how broadly preemption applies to licensing agreements.</li>
+        <li>This is particularly relevant for AI models that may not meet copyrightability requirements.</li>
+        <li>The enforceability of AI model licenses is still an open legal question.</li>
+        <li>Companies should be aware that their licensing terms may not be fully enforceable.</li>
+      </ul></div>
+    </section>
+
+    <section class="slide">
+      <h1>Panel Question</h1>
+      <div style="background: rgba(0, 0, 0, 0.7); padding: 3rem; border-radius: 12px; margin: 2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 1.2rem; line-height: 1.7; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); text-align: center;">
+        <h2 style="color: var(--accent); margin-bottom: 2rem;">
+          From a policy perspective, should AI model licenses be enforceable if the models themselves are not copyrightable? How could doctrinal developments in preemption around AI licensing impact AI development in other ways?
+        </h2>
+      </div>
+      <div class="notes"><h3>Speaker Notes</h3>
+        <ul>
+          <li>This panel question is about the policy and doctrinal implications of enforcing model licenses when copyright doesn't apply.</li>
+          <li>Should companies be able to use contract law to control access and use of models that aren't copyrightable?</li>
+          <li>Consider the balance between incentivizing innovation and preventing overreach that could stifle competition or user rights.</li>
+          <li>Think about how a decision here could ripple out to other areas—software, data, or even other AI artifacts.</li>
+          <li>Encourage students to consider both the practical and theoretical consequences of enforceability.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 40 -->
+    <section class="slide">
+      <h1>Wrap‑Up</h1>
+      <div style="padding: 2.5rem 0;">
+        <ol style="font-size: 1.35rem; line-height: 1.7; margin-bottom: 2.5rem; color: var(--fg); padding-left: 2.2rem;">
+          <li style="margin-bottom: 1.1rem;">
+            <span style="font-weight: 700; color: var(--accent);">AI is straining copyright doctrine</span>
+            <span style="color: var(--fg); font-weight: 400;">&nbsp;and forcing courts to revisit first principles—especially the labor/originality distinction.</span>
+          </li>
+          <li style="margin-bottom: 1.1rem;">
+            <span style="font-weight: 700; color: var(--accent2);">The lawsuits won't stop</span>
+            <span style="color: var(--fg); font-weight: 400;">&nbsp;unless Congress creates a DMCA-like safe harbor for AI.</span>
+          </li>
+          <li style="margin-bottom: 1.1rem;">
+            <span style="font-weight: 700; color: var(--ok);">Questions of copyrightability, federalism, and contract law</span>
+            <span style="color: var(--fg); font-weight: 400;">&nbsp;all spin out from the basic uncertainty about AI and copyright.</span>
+          </li>
+        </ol>
+        <div style="font-size: 1.25rem; color: var(--muted); font-style: italic; margin-top: 1.5rem; text-align: center;">
+          AI is going to change copyright law...<br>
+          or copyright law will "<span style="color: var(--accent); font-weight: 600;">bring generative AI systems to their knees.</span>"<br>
+          <span style="font-size: 1.05rem; color: var(--accent2); font-weight: 500;">— Pam Samuelson</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="pill">Slide <span id="index">1</span>/<span id="total">69</span></div>
+    <div class="pill">© for teaching use • Not legal advice</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const idxEl = document.getElementById('index');
+  const totalEl = document.getElementById('total');
+  const prog = document.getElementById('progressbar');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  totalEl.textContent = total;
+  
+  // Parse slide number from URL hash (e.g., #slide-5)
+  function getSlideFromHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/slide-(\d+)/);
+    if (match) {
+      const slideNum = parseInt(match[1]) - 1; // Convert to 0-based index
+      if (slideNum >= 0 && slideNum < total) {
+        return slideNum;
+      }
+    }
+    return 0; // Default to first slide
+  }
+  
+  let i = getSlideFromHash();
+
+  function render(){
+    slides.forEach((s, j)=>{ 
+      s.classList.toggle('active', j===i); 
+      // Reset all fair use case answer visibility when navigating to slides
+      if (j === i) {
+        const answerDivs = s.querySelectorAll('[id$="-answer"]');
+        answerDivs.forEach(answerDiv => {
+          answerDiv.style.display = 'none';
+        });
+      }
+    });
+    idxEl.textContent = i+1;
+    prog.style.width = ((i+1)/total*100).toFixed(1)+'%';
+    // Update URL hash to reflect current slide
+    window.location.hash = `slide-${i+1}`;
+  }
+  
+  function next(){ 
+    // Check if we're on any fair use case slide and the answer is hidden
+    const currentSlide = slides[i];
+    if (currentSlide) {
+      // Check for any hidden answer div in the current slide
+      const hiddenAnswer = currentSlide.querySelector('[id$="-answer"][style*="display: none"]');
+      if (hiddenAnswer) {
+        hiddenAnswer.style.display = 'block';
+        return;
+      }
+    }
+    
+    // Normal next slide behavior
+    if(i<total-1){ i++; render(); } 
+  }
+  function prev(){ if(i>0){ i--; render(); } }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  
+  // Listen for hash changes (browser back/forward buttons)
+  window.addEventListener('hashchange', () => {
+    i = getSlideFromHash();
+    render();
+  });
+  
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown') next();
+    if(e.key==='ArrowLeft'  || e.key==='PageUp')   prev();
+  });
+
+  // Start with minimal text (no bullets); printing shows all automatically
+  document.body.classList.remove('details');
+  render();
+
+  // Set Steamboat Willie video to start from middle
+  const steamboatVideo = document.getElementById('steamboat-video');
+  if (steamboatVideo) {
+    steamboatVideo.addEventListener('loadedmetadata', function() {
+      this.currentTime = this.duration / 2;
+    });
+  }
+})();
+</script>
+</body>
+</html>
