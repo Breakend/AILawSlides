@@ -34,6 +34,13 @@
   .controls{ display:flex; align-items:center; gap:.5rem; }
   .btn{ appearance:none; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--fg); padding:.5rem .8rem; border-radius:999px; cursor:pointer; font-weight:700; }
   .btn:hover{ border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.08); }
+  
+  /* Fullscreen styles */
+  .deck:fullscreen{ background: var(--bg); }
+  .deck:fullscreen header, .deck:fullscreen footer{ backdrop-filter: blur(20px); }
+  .deck:-webkit-full-screen{ background: var(--bg); }
+  .deck:-moz-full-screen{ background: var(--bg); }
+  .deck:-ms-fullscreen{ background: var(--bg); }
 
   /* Slides */
   .slides{ position:relative; height:100%; overflow:hidden; }
@@ -117,6 +124,7 @@
     <div class="controls">
       <button class="btn" id="prevBtn" title="Previous (←)">← Prev</button>
       <button class="btn" id="nextBtn" title="Next (→)">Next →</button>
+      <button class="btn" id="fullscreenBtn" title="Fullscreen (F)">⛶</button>
     </div>
   </header>
 
@@ -776,9 +784,9 @@
         <h2>Books • Articles • Websites • Code • Social Media</h2>
         <p class="accent big">Most of it is copyrighted. So what could go wrong?</p>
       </div>
-      <div style="flex: 1; display: flex; justify-content: center; position: relative;">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <img style="max-width: 100%; max-height: 70vh; object-fit: contain;" alt="Machine learning xkcd comic" src="https://www.explainxkcd.com/wiki/images/d/d3/machine_learning.png"/>
-        <div class="credit" style="position: absolute; bottom: -2rem; right: 0;">Image: xkcd (machine learning)</div>
+        <div class="credit" style="margin-top: 1rem; text-align: center;">Image: xkcd (machine learning)</div>
       </div>
     </section>
 
@@ -1374,45 +1382,47 @@
     </section>
 
     <section class="slide">
-      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
-          <!-- Left side: Question -->
-          <div style="padding: 2rem;">
-            <h1 style="
-              font-size: clamp(3rem, 6vw, 5rem); 
-              font-weight: 900; 
-              line-height: 1.1; 
-              color: var(--warn); 
-              margin: 0 0 2rem 0; 
-              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            ">
-              Can models really output training text?
-            </h1>
-            <div style="
-              font-size: clamp(2.5rem, 5vw, 4rem); 
-              font-weight: 800; 
-              color: var(--accent); 
-              margin: 0;
-              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            ">
-              Sometimes.
+      <div style="display: flex; flex-direction: column; height: 100%; padding-bottom: 6rem;">
+        <div style="display: flex; align-items: center; justify-content: center; flex: 1; min-height: 0;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+            <!-- Left side: Question -->
+            <div style="padding: 2rem;">
+              <h1 style="
+                font-size: clamp(3rem, 6vw, 5rem); 
+                font-weight: 900; 
+                line-height: 1.1; 
+                color: var(--warn); 
+                margin: 0 0 2rem 0; 
+                text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              ">
+                Can models really output training text?
+              </h1>
+              <div style="
+                font-size: clamp(2.5rem, 5vw, 4rem); 
+                font-weight: 800; 
+                color: var(--accent); 
+                margin: 0;
+                text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              ">
+                Sometimes.
+              </div>
+            </div>
+            
+            <!-- Right side: Research image -->
+            <div style="text-align: center;">
+              <img src="../regurgitation.png" 
+                   alt="Research showing model regurgitation of training data" 
+                   style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
             </div>
           </div>
-          
-          <!-- Right side: Research image -->
-          <div style="text-align: center;">
-            <img src="../regurgitation.png" 
-                 alt="Research showing model regurgitation of training data" 
-                 style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
-          </div>
         </div>
-      </div>
-      
-      <!-- Citation at bottom -->
-      <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center;">
-        <div style="font-size: 1rem; color: var(--muted); font-style: italic;">
-          Peter Henderson, Xuechen Li, Dan Jurafsky, Tatsunori Hashimoto, Mark A Lemley, Percy Liang,<br>
-          <em>Foundation Models and Fair Use</em>, Journal of Machine Learning Research (2023).
+        
+        <!-- Citation at bottom with proper spacing -->
+        <div style="text-align: left; margin-top: 2rem; padding: 0 2rem;">
+          <div style="font-size: 1rem; color: var(--muted); font-style: italic;">
+            Peter Henderson, Xuechen Li, Dan Jurafsky, Tatsunori Hashimoto, Mark A Lemley, Percy Liang,<br>
+            <em>Foundation Models and Fair Use</em>, Journal of Machine Learning Research (2023).
+          </div>
         </div>
       </div>
     </section>
@@ -1618,8 +1628,8 @@
         </div>
       </div>
       
-      <!-- Credit at bottom -->
-      <div style="position: absolute; bottom: 2rem; right: 2rem;">
+      <!-- Credit at bottom with proper spacing -->
+      <div style="text-align: right; margin-top: 2rem; padding: 0 2rem;">
         <div style="font-size: 0.9rem; color: var(--muted); font-style: italic;">
           Credit: <a href="https://www.youtube.com/watch?v=6DdgVaZG4cM" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">Stanford Law Class</a>
         </div>
@@ -1724,6 +1734,117 @@
         <li>Unclear how to distinguish between training data use vs. hosting user content.</li>
         <li>Repeat infringer policies are difficult to implement for AI-generated content.</li>
         <li>Anti-circumvention issues arise when AI systems bypass content protection measures.</li>
+      </ul></div>
+    </section>
+
+    <!-- DMCA § 1202 - Copyright Management Information -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Title -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--accent); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              DMCA § 1202
+            </h1>
+            <h2 style="color: var(--accent2); font-size: 1.8rem; margin-bottom: 1.5rem;">Copyright Management Information</h2>
+          </div>
+          
+          <!-- Right side: Content -->
+          <div style="padding: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+              <h3 style="color: var(--accent); font-size: 1.3rem; margin-bottom: 1.2rem;">17 U.S. Code § 1202 - Integrity of copyright management information</h3>
+              
+              <h4 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 0.8rem;">(a) FALSE COPYRIGHT MANAGEMENT INFORMATION</h4>
+              <p style="font-size: 0.95rem; line-height: 1.4; color: var(--fg); margin: 0 0 0.8rem 0;">
+                No person shall knowingly and with the intent to induce, enable, facilitate, or conceal infringement—
+              </p>
+              <ul style="font-size: 0.95rem; line-height: 1.4; color: var(--fg); margin: 0 0 1.2rem 1.2rem;">
+                <li style="margin-bottom: 0.4rem;">(1) provide copyright management information that is false, or</li>
+                <li style="margin-bottom: 0.4rem;">(2) distribute or import for distribution copyright management information that is false.</li>
+              </ul>
+              
+              <h4 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 0.8rem;">(b) REMOVAL OR ALTERATION OF COPYRIGHT MANAGEMENT INFORMATION</h4>
+              <p style="font-size: 0.95rem; line-height: 1.4; color: var(--fg); margin: 0 0 0.8rem 0;">
+                No person shall, without the authority of the copyright owner or the law—
+              </p>
+              <ul style="font-size: 0.95rem; line-height: 1.4; color: var(--fg); margin: 0 0 0.8rem 1.2rem;">
+                <li style="margin-bottom: 0.4rem;">(1) intentionally remove or alter any copyright management information,</li>
+                <li style="margin-bottom: 0.4rem;">(2) distribute or import for distribution copyright management information knowing that the copyright management information has been removed or altered without authority of the copyright owner or the law, or</li>
+                <li style="margin-bottom: 0.4rem;">(3) distribute, import for distribution, or publicly perform works, copies of works, or phonorecords, knowing that copyright management information has been removed or altered without authority of the copyright owner or the law,
+                knowing, or, with respect to civil remedies under section 1203, having reasonable grounds to know, that it will induce, enable, facilitate, or conceal an infringement of any right under this title.
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>Section 1202 protects copyright management information (CMI) from tampering.</li>
+        <li>CMI includes metadata that identifies copyright ownership and usage terms.</li>
+        <li>This is separate from the safe harbor provisions in Section 512.</li>
+        <li>Violations require knowledge that the act will induce infringement.</li>
+        <li>Relevant for AI training when datasets strip or alter copyright notices.</li>
+      </ul></div>
+    </section>
+
+    <!-- DMCA § 1202 Examples -->
+    <section class="slide">
+      <div style="display: flex; align-items: center; justify-content: center; height: 80vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1400px;">
+          
+          <!-- Left side: Title and CMI Example -->
+          <div style="padding: 2rem;">
+            <h1 style="
+              font-size: clamp(2.5rem, 5vw, 4rem); 
+              font-weight: 900; 
+              line-height: 1.1; 
+              color: var(--accent); 
+              margin: 0 0 2rem 0; 
+              text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              DMCA § 1202 Examples
+            </h1>
+            <h2 style="color: var(--accent2); font-size: 1.6rem; margin-bottom: 1.5rem;">Copyright Management Information in Practice</h2>
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <img src="../cmiexample.png" 
+                   alt="Example of copyright management information" 
+                   style="width: 100%; max-width: 500px; height: auto; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+            </div>
+          </div>
+          
+          <!-- Right side: License Addition Example -->
+          <div style="padding: 2rem;">
+            <h3 style="color: var(--accent); font-size: 1.6rem; margin-bottom: 1rem;">Adding License Information</h3>
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <img src="../addlicense.png" 
+                   alt="Example of adding license information to code" 
+                   style="width: 100%; max-width: 500px; height: auto; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+            </div>
+            
+            <div style="background: var(--warn); color: #000; padding: 1.5rem; border-radius: 8px; font-weight: 600; text-align: center; margin-top: 2rem;">
+              <strong>Note:</strong> Doe v. Github case is currently on appeal in the 9th Circuit on these issues. What do you think can go wrong with LLMs trained on code formatted like this?
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="notes"><h3>Speaker Notes</h3><ul>
+        <li>These images show real-world examples of copyright management information.</li>
+        <li>CMI includes copyright notices, license information, and attribution details.</li>
+        <li>Removing or altering such information can violate Section 1202.</li>
+        <li>Doe v. Github involves allegations of CMI removal in AI training datasets.</li>
+        <li>The case is being appealed to the 9th Circuit, so the law in this area is still developing.</li>
       </ul></div>
     </section>
 
@@ -1878,6 +1999,8 @@
   const prog = document.getElementById('progressbar');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const deck = document.querySelector('.deck');
   totalEl.textContent = total;
   
   // Parse slide number from URL hash (e.g., #slide-5)
@@ -1928,9 +2051,37 @@
     if(i<total-1){ i++; render(); } 
   }
   function prev(){ if(i>0){ i--; render(); } }
+  
+  // Fullscreen functionality
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+      // Enter fullscreen
+      if (deck.requestFullscreen) {
+        deck.requestFullscreen();
+      } else if (deck.webkitRequestFullscreen) {
+        deck.webkitRequestFullscreen();
+      } else if (deck.mozRequestFullScreen) {
+        deck.mozRequestFullScreen();
+      } else if (deck.msRequestFullscreen) {
+        deck.msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
 
   nextBtn.addEventListener('click', next);
   prevBtn.addEventListener('click', prev);
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
   
   // Listen for hash changes (browser back/forward buttons)
   window.addEventListener('hashchange', () => {
@@ -1941,6 +2092,10 @@
   window.addEventListener('keydown', (e)=>{
     if(e.key==='ArrowRight' || e.key==='PageDown') next();
     if(e.key==='ArrowLeft'  || e.key==='PageUp')   prev();
+    if(e.key==='f' || e.key==='F' || e.key==='F11') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
   });
 
   // Start with minimal text (no bullets); printing shows all automatically
