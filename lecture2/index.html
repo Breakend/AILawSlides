@@ -98,19 +98,12 @@
   body:not(.details) .slide .card, body:not(.details) .slide .grid { display:none; }
   .hint{ opacity:.7; font-size:.95rem; }
 
-  /* Notes */
-  .notes{ display:none; margin-top:1rem; border:1px dashed rgba(255,255,255,.18); background:rgba(6,8,14,.7); padding:1rem; border-radius:14px; }
-  body.show-notes .notes{ display:block; }
-  .notes h3{ margin:.2rem 0 .6rem; font-size:1rem; color:#cbd5e1; text-transform:uppercase; letter-spacing:.16em; }
-  .notes ul{ margin:.3rem 0 0 1.1rem; }
-  .notes li{ margin:.35rem 0; font-size:1rem; }
 
   /* Print */
   @media print{
     body{ overflow:visible; }
     header, footer{ display:none; }
     .slide{ position:relative; display:block !important; page-break-after: always; }
-    .notes{ display:block !important; }
     /* Always show detailed bullets when printing */
     .slide ul, .slide ol, .card, .grid, .two-col { display:block !important; }
   }
@@ -151,10 +144,6 @@
         <li><strong>II. Rights, Claims, Remedies, and Defenses</strong> — what can you do with copyrighted material?</li>
         <li><strong>III. Other Considerations</strong> — DMCA • interaction with licenses/contracts</li>
       </ul>
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Section I (~45 min), Section II (~35 min), Section III (~60 min incl. discussion).</li>
-        <li>We’ll reference recent USCO reports (2025) and live litigation for AI.</li>
-      </ul></div>
     </section>
 
     <!-- Quote slide -->
@@ -202,10 +191,6 @@
       <h1>Intellectual Property Clause of the Constitution</h1>
       <p class="big" style="font-family: 'Times New Roman', 'Times', serif; font-style: italic; letter-spacing: 0.3px; line-height: 1.3;">"To promote the Progress of Science and useful Arts, by securing for limited Times to Authors and Inventors the exclusive Right to their respective Writings and Discoveries."</p>
       <div class="credit">Image: U.S. National Archives (public domain)</div>
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>IP Clause: Article I, §8, cl. 8 → empowers Congress to secure exclusive rights for limited times.</li>
-        <li>Copyright is federal statutory law (Title 17), preempting state law for works within scope.</li>
-      </ul></div>
     </section>
 
     <!-- 4.5 -->
@@ -237,11 +222,6 @@
       </div>
       
       <div class="credit">Image: National Archives (President Ford signing legislation)</div>
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Shows the evolution from 1790 to present day.</li>
-        <li>Highlights key technological adaptations (DMCA for digital age).</li>
-        <li>Sets up the current Title 17 framework we'll be discussing.</li>
-      </ul></div>
     </section>
 
     <!-- 5 -->
@@ -286,12 +266,6 @@
 
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This is the foundational test for copyright protection - all three elements must be present.</li>
-        <li>Most AI training data easily meets these requirements.</li>
-        <li>The moment someone writes code, creates art, or writes text, it's likely copyrighted.</li>
-        <li>Ideas, facts, and procedures are not protected by copyright.</li>
-      </ul></div>
     </section>
 
         <!-- 13 -->
@@ -373,12 +347,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Thick copyright applies to highly creative works with substantial originality.</li>
-        <li>Thin copyright applies to functional works, facts, and minimal creative elements.</li>
-        <li>This distinction is crucial for understanding what aspects of software are protectable.</li>
-        <li>Algorithms and functional aspects of software typically receive thin or no protection.</li>
-      </ul></div>
     </section>
 
 
@@ -657,14 +625,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This question builds on the Copyright Office's human authorship requirement.</li>
-        <li>Consider the originality and fixation requirements from § 102.</li>
-        <li>Think about whether model weights are the result of human creative expression.</li>
-        <li>Consider the role of training data, algorithms, and human choices in model creation.</li>
-        <li>This ties together concepts of authorship, originality, and the nature of AI systems.</li>
-        <li>Good opportunity to discuss the intersection of technical and legal concepts.</li>
-      </ul></div>
     </section>
 
     <section class="slide">
@@ -848,11 +808,6 @@
         </ol>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Use §106 as a checklist when evaluating features or datasets.</li>
-        <li>Rights are limited by §107–§122 (fair use, libraries, etc.).</li>
-        <li>Link takes students directly to the Cornell Law source.</li>
-      </ul></div>
     </section>
         <!-- 14 -->
         <section class="slide">
@@ -862,9 +817,6 @@
             <li>Statutory damages/fees only if timely registration (<a href="https://www.law.cornell.edu/uscode/text/17/412" target="_blank" rel="noopener">§412</a>), otherwise have to prove actual damages.</li>
             <li>Notice © optional post‑1989 but still helpful.</li>
           </ul>
-          <div class="notes"><h3>Speaker Notes</h3><ul>
-            <li>Timely = before infringement begins or within 3 months of first publication (but some weirdness in doctrine right now).</li>
-          </ul></div>
         </section>
     
     <!-- 15 -->
@@ -899,13 +851,6 @@
         </div>
       </div>
       <div class="credit">Image: Unsplash (scales of justice)</div>
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Direct infringement: straightforward copying, distribution, public performance, etc.</li>
-        <li>Secondary liability crucial for AI/tech platforms—when are you liable for users' infringement?</li>
-        <li>Contributory: classic example is Napster—knew users were infringing, provided the tools.</li>
-        <li>Vicarious: don't need knowledge if you profit and can control the infringement.</li>
-        <li>DMCA safe harbors (§512) protect platforms that follow takedown procedures.</li>
-      </ul></div>
     </section>
 
 
@@ -936,11 +881,6 @@
         </div>
       </div>
       <div class="credit">Image: Unsplash (scales of justice)</div>
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Multi‑factor, case‑by‑case. Modern anchors: <em>Google v. Oracle</em>; <em>Warhol v. Goldsmith</em>.</li>
-        <li>Visual representation helps students remember the four factors.</li>
-        <li>Each factor gets its own icon and color for better retention.</li>
-      </ul></div>
     </section>
 
     <!-- 16.5 - Harper & Row v. Nation Enterprises Case Study -->
@@ -975,12 +915,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case established that taking the "heart" of a work, even if small in quantity, can defeat fair use.</li>
-        <li>Demonstrates that Factor 3 (amount used) looks at qualitative as well as quantitative taking.</li>
-        <li>Relevant to AI training on high-value, creative content.</li>
-      </ul></div>
     </section>
 
     <!-- Google Books Case -->
@@ -1015,12 +949,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case established that large-scale digitization can be fair use when transformative.</li>
-        <li>Demonstrates how Factor 1 (purpose) can favor fair use for public benefit.</li>
-        <li>Relevant to AI training on large datasets for research purposes.</li>
-      </ul></div>
     </section>
 
     <!-- Axanar Case -->
@@ -1055,12 +983,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case shows the limits of fan works and derivative content.</li>
-        <li>Demonstrates how Factor 4 (market effect) can defeat fair use for commercial fan works.</li>
-        <li>Relevant to AI-generated content that closely mimics existing franchises.</li>
-      </ul></div>
     </section>
 
     <!-- Harry Potter Lexicon Case -->
@@ -1095,12 +1017,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case shows the limits of reference works and companion books.</li>
-        <li>Demonstrates how Factor 4 (market effect) can defeat fair use even for reference materials.</li>
-        <li>Relevant to AI-generated summaries or companion content.</li>
-      </ul></div>
     </section>
 
     <!-- Boldly Go Case -->
@@ -1135,12 +1051,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case shows the limits of mashup and parody works.</li>
-        <li>Demonstrates how Factor 1 (purpose) and Factor 3 (amount) can defeat fair use.</li>
-        <li>Relevant to AI-generated mashups or derivative works.</li>
-      </ul></div>
     </section>
 
     <!-- Warhol Case -->
@@ -1175,12 +1085,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This landmark case significantly narrowed the transformative use doctrine.</li>
-        <li>Demonstrates how Factor 1 (purpose) and Factor 4 (market effect) work together.</li>
-        <li>Highly relevant to AI art and style transfer applications.</li>
-      </ul></div>
     </section>
 
     <!-- 2K Interactive Tattoo Case -->
@@ -1215,12 +1119,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case established de minimis use principles for incidental copyrighted elements.</li>
-        <li>Demonstrates how Factor 3 (amount) can favor fair use for incidental uses.</li>
-        <li>Relevant to AI-generated content with incidental copyrighted elements.</li>
-      </ul></div>
     </section>
 
     <!-- Alexander v. Take-Two Case -->
@@ -1255,13 +1153,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case contrasts with the NBA 2K tattoo case, showing different outcomes for similar issues.</li>
-        <li>Demonstrates how prominence and purpose of use can affect fair use analysis.</li>
-        <li>Shows the importance of case-by-case analysis in fair use determinations.</li>
-        <li>Relevant to AI-generated content that prominently features copyrighted elements.</li>
-      </ul></div>
     </section>
 
     <!-- Kadrey v. Meta Case -->
@@ -1295,13 +1186,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case established that AI training can be transformative fair use.</li>
-        <li>Demonstrates how Factor 1 (purpose) can favor fair use for AI development.</li>
-        <li>Shows the importance of proving market harm in fair use analysis.</li>
-        <li>Highly relevant to current AI training data disputes.</li>
-      </ul></div>
     </section>
 
     <!-- Bartz v. Anthropic Case -->
@@ -1335,13 +1219,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case shows the importance of lawful data acquisition for AI training.</li>
-        <li>Demonstrates how data source legality affects fair use analysis.</li>
-        <li>Shows the distinction between lawful and pirated training data.</li>
-        <li>Relevant to AI companies' data acquisition practices.</li>
-      </ul></div>
     </section>
 
     <!-- UMG v. Anthropic Case -->
@@ -1372,13 +1249,6 @@
         
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Click next to reveal the court's answer about fair use.</li>
-        <li>This case shows the music industry's aggressive stance on AI training.</li>
-        <li>Demonstrates the challenges of proving irreparable harm in AI cases.</li>
-        <li>Shows how preliminary injunctions work in copyright disputes.</li>
-        <li>Highly relevant to ongoing AI music generation disputes.</li>
-      </ul></div>
     </section>
 
     <section class="slide">
@@ -1478,12 +1348,6 @@
         </p>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide shows how technical mitigation strategies can influence fair use analysis.</li>
-        <li>References Google Books case where safeguards were crucial to the fair use determination.</li>
-        <li>Demonstrates that fair use isn't just about the four factors, but also about implementation details.</li>
-        <li>Relevant to AI companies implementing technical safeguards against memorization.</li>
-      </ul></div>
     </section>
 
     <!-- Non-literal Infringement Challenges -->
@@ -1515,14 +1379,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide highlights a key limitation of technical mitigation strategies.</li>
-        <li>While mitigations can prevent verbatim copying, they struggle with non-literal infringement.</li>
-        <li>Non-literal infringement includes substantial similarity in characters, plots, or creative elements.</li>
-        <li>The Ultraman example shows how AI might generate content that's similar in concept but not identical.</li>
-        <li>Technical filters are much better at catching exact matches than conceptual similarities.</li>
-        <li>This creates ongoing challenges for AI companies trying to avoid copyright infringement.</li>
-      </ul></div>
     </section>
 
     <!-- Between Labor Protection and IP Rights -->
@@ -1580,12 +1436,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide sets up the DMCA safe harbor discussion by highlighting the practical question.</li>
-        <li>Shows how platforms would be vulnerable without legal protections.</li>
-        <li>The Reddit comment illustrates public awareness of platform liability issues.</li>
-        <li>Transitions naturally into explaining DMCA safe harbors as the solution.</li>
-      </ul></div>
     </section>
 
     <!-- Origins of DMCA § 512 -->
@@ -1635,13 +1485,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide provides crucial historical context for understanding DMCA safe harbors.</li>
-        <li>RTC v. Netcom (1995) was a foundational case that established key principles later codified in DMCA.</li>
-        <li>Shows how judicial decisions influenced legislative drafting of Section 512.</li>
-        <li>The "volitional acts" requirement from Netcom became central to safe harbor protections.</li>
-        <li>Notice-and-takedown framework originated from this case's holding about contributory infringement.</li>
-      </ul></div>
     </section>
     
     <!-- DMCA Safe Harbor -->
@@ -1685,12 +1528,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide explains the four main safe harbors provided by DMCA Section 512.</li>
-        <li>Each subsection protects different types of internet service activities.</li>
-        <li>The takedown requirements are key to maintaining safe harbor protection.</li>
-        <li>Most relevant for AI companies are likely (c) hosting and (d) search engine provisions.</li>
-      </ul></div>
     </section>
 
     <!-- What about a DMCA for AI? -->
@@ -1728,13 +1565,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide highlights the key challenges in applying DMCA to AI systems.</li>
-        <li>Traditional takedown doesn't work well when content is "learned" rather than stored.</li>
-        <li>Unclear how to distinguish between training data use vs. hosting user content.</li>
-        <li>Repeat infringer policies are difficult to implement for AI-generated content.</li>
-        <li>Anti-circumvention issues arise when AI systems bypass content protection measures.</li>
-      </ul></div>
     </section>
 
     <!-- DMCA § 1202 - Copyright Management Information -->
@@ -1788,13 +1618,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Section 1202 protects copyright management information (CMI) from tampering.</li>
-        <li>CMI includes metadata that identifies copyright ownership and usage terms.</li>
-        <li>This is separate from the safe harbor provisions in Section 512.</li>
-        <li>Violations require knowledge that the act will induce infringement.</li>
-        <li>Relevant for AI training when datasets strip or alter copyright notices.</li>
-      </ul></div>
     </section>
 
     <!-- DMCA § 1202 Examples -->
@@ -1839,13 +1662,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>These images show real-world examples of copyright management information.</li>
-        <li>CMI includes copyright notices, license information, and attribution details.</li>
-        <li>Removing or altering such information can violate Section 1202.</li>
-        <li>Doe v. Github involves allegations of CMI removal in AI training datasets.</li>
-        <li>The case is being appealed to the 9th Circuit, so the law in this area is still developing.</li>
-      </ul></div>
     </section>
 
     <!-- Copyright Preemption and Licensing -->
@@ -1880,12 +1696,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>This slide sets up the tension between copyright law and contractual licensing.</li>
-        <li>Even if models aren't copyrightable, companies still try to control them through licenses.</li>
-        <li>This creates interesting legal questions about the enforceability of such licenses.</li>
-        <li>The image shows various licensing schemes used by AI companies.</li>
-      </ul></div>
     </section>
 
     
@@ -1928,14 +1738,6 @@
         </div>
       </div>
       
-      <div class="notes"><h3>Speaker Notes</h3><ul>
-        <li>Copyright preemption is a complex doctrine that prevents state law from undermining federal copyright policy.</li>
-        <li>When copyright says something shouldn't be protected, contracts can't end-run around that limitation.</li>
-        <li>There's currently a circuit split on how broadly preemption applies to licensing agreements.</li>
-        <li>This is particularly relevant for AI models that may not meet copyrightability requirements.</li>
-        <li>The enforceability of AI model licenses is still an open legal question.</li>
-        <li>Companies should be aware that their licensing terms may not be fully enforceable.</li>
-      </ul></div>
     </section>
 
     <section class="slide">
@@ -1944,15 +1746,6 @@
         <h2 style="color: var(--accent); margin-bottom: 2rem;">
           From a policy perspective, should AI model licenses be enforceable if the models themselves are not copyrightable? How could doctrinal developments in preemption around AI licensing impact AI development in other ways?
         </h2>
-      </div>
-      <div class="notes"><h3>Speaker Notes</h3>
-        <ul>
-          <li>This panel question is about the policy and doctrinal implications of enforcing model licenses when copyright doesn't apply.</li>
-          <li>Should companies be able to use contract law to control access and use of models that aren't copyrightable?</li>
-          <li>Consider the balance between incentivizing innovation and preventing overreach that could stifle competition or user rights.</li>
-          <li>Think about how a decision here could ripple out to other areas—software, data, or even other AI artifacts.</li>
-          <li>Encourage students to consider both the practical and theoretical consequences of enforceability.</li>
-        </ul>
       </div>
     </section>
 

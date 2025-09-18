@@ -1,0 +1,1805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Protecting Your Likeness — 2.5‑Hour Lecture Deck</title>
+<style>
+  :root{
+    --bg: #000000; /* website dark primary */
+    --fg: #ffffff; /* website text primary */
+    --muted: #b0b0b0; /* website text secondary */
+    --accent: #D4A574; /* website accent color */
+    --accent2: #E6B887; /* website accent hover */
+    --ok: #34d399; --warn: #f59e0b; --bad: #f87171;
+    --glass: rgba(0,0,0,.8);
+    --stroke: rgba(255,255,255,.12);
+    --shadow: 0 4px 12px rgba(0,0,0,.3);
+  }
+  html, body { height:100%; }
+  body{
+    margin:0; color:var(--fg); background: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+    overflow:hidden;
+  }
+  /* Deck layout */
+  .deck{ 
+    height:100%; 
+    display:grid; 
+    grid-template-rows:auto 1fr auto; 
+    transform: scale(0.75);
+    transform-origin: top left;
+    width: 133.33%; /* 100% / 0.75 = 133.33% to compensate for scaling */
+    height: 133.33%;
+  }
+  header, footer{ display:flex; align-items:center; gap:.75rem; padding:.75rem 1rem; backdrop-filter: blur(10px); background:var(--glass); box-shadow:var(--shadow); z-index:20; }
+  header{ border-bottom:1px solid var(--stroke); }
+  footer{ border-top:1px solid var(--stroke); justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:.65rem; font-weight:800; letter-spacing:.4px; }
+  .brand .dot{ width:.65rem; height:.65rem; border-radius:50%; background:conic-gradient(from 0deg, var(--accent), var(--accent2)); box-shadow:0 0 20px rgba(99,102,241,.8); }
+  .progress{ position:relative; height:6px; flex:1; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+  .progress>span{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 0 18px rgba(99,102,241,.6); }
+  .controls{ display:flex; align-items:center; gap:.5rem; }
+  .btn{ appearance:none; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--fg); padding:.5rem .8rem; border-radius:999px; cursor:pointer; font-weight:700; }
+  .btn:hover{ border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.08); }
+  
+  /* Fullscreen styles */
+  .deck:fullscreen{ background: var(--bg); }
+  .deck:fullscreen header, .deck:fullscreen footer{ backdrop-filter: blur(20px); }
+  .deck:-webkit-full-screen{ background: var(--bg); }
+  .deck:-moz-full-screen{ background: var(--bg); }
+  .deck:-ms-fullscreen{ background: var(--bg); }
+
+  /* Slides */
+  .slides{ position:relative; height:100%; overflow:hidden; }
+  .slide{ position:absolute; inset:0; padding:8vh 8vw; display:none; flex-direction:column; justify-content:center; gap:1.2rem; }
+  .slide.active{ display:flex; }
+
+  /* Full‑bleed imagery */
+  .cover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; opacity:.28; filter:grayscale(100%) contrast(1.05) brightness(.6); }
+  .overlay{ position:absolute; inset:0; z-index:1; background: radial-gradient(60% 60% at 20% 20%, rgba(0,0,0,.35), transparent 60%), linear-gradient(180deg, rgba(4,6,12,.75), transparent 40%); }
+  .slide>*{ position:relative; z-index:2; }
+  .credit{ position:absolute; right:1rem; bottom:1rem; z-index:3; font-size:.8rem; color:#c3c7cf; background:rgba(0,0,0,.42); padding:.25rem .5rem; border-radius:8px; border:1px solid rgba(255,255,255,.12); }
+
+  h1{ margin:0; font-size: clamp(3rem, 6vw, 5rem); line-height:1.05; letter-spacing:.2px; text-shadow:0 4px 32px rgba(0,0,0,.35); }
+  h2{ margin:0; font-size: clamp(1.8rem, 4vw, 2.5rem); color:#d4d8df; }
+  p, li{ font-size: clamp(1.8rem, 3vw, 2.4rem); color:#d7dbe2; }
+  .kicker{ text-transform:uppercase; letter-spacing:.2em; color:var(--muted); font-weight:800; font-size:1.2rem; }
+  .big{ font-size: clamp(3rem, 6vw, 5rem); font-weight:900; letter-spacing:.2px; }
+  .accent{ color:var(--accent); }
+  .accent2{ color:var(--accent2); }
+  .pill{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--stroke); background:rgba(255,255,255,.06); padding:.3rem .7rem; border-radius:999px; font-size:.9rem; }
+
+  /* Branding */
+  .polaris-branding{ 
+    margin-top: 2rem; 
+    display: flex; 
+    justify-content: center; 
+  }
+  .polaris-logo{ 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+  }
+  .logo-image{ 
+    height: 2.5rem; 
+    width: auto; 
+    filter: brightness(0) invert(1); 
+  }
+  .polaris-text{ 
+    font-size: 1.5rem; 
+    font-weight: 300; 
+    color: var(--fg); 
+    letter-spacing: 0.3em; 
+    text-transform: uppercase; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+  }
+
+  /* Two-column layout */
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; }
+  @media (max-width: 768px) { .two-col{ grid-template-columns:1fr; } }
+
+  /* Print */
+  @media print{
+    body{ overflow:visible; }
+    header, footer{ display:none; }
+    .slide{ position:relative; display:block !important; page-break-after: always; }
+    .slide ul, .slide ol, .card, .grid, .two-col { display:block !important; }
+  }
+
+  /* Question slide styles */
+  .question-slide {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .question-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 3rem;
+  }
+  
+  .question-box {
+    background: rgba(255,255,255,.05);
+    border: 2px solid var(--accent2);
+    border-radius: 16px;
+    padding: 3rem 4rem;
+    max-width: 800px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  
+  .question-text {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    line-height: 1.4;
+    color: var(--accent2);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Interactive highlighting styles */
+  .highlightable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin: -0.5rem;
+  }
+  
+  .highlightable:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .highlighted {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+  }
+  
+  .highlight-banner {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+  }
+  
+  .highlighted-blue {
+    background: rgba(0, 100, 255, 0.2) !important;
+    border: 2px solid #0066ff !important;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.3) !important;
+  }
+  
+  .privacy-list.highlighted {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: -1rem;
+  }
+  
+</style>
+</head>
+<body>
+<div class="deck">
+  <header>
+    <div class="brand"><span class="dot"></span><span>Protecting Your Likeness</span></div>
+    <div class="progress" aria-label="progress"><span id="progressbar"></span></div>
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Previous (←)">← Prev</button>
+      <button class="btn" id="nextBtn" title="Next (→)">Next →</button>
+      <button class="btn" id="fullscreenBtn" title="Fullscreen (F)">⛶</button>
+    </div>
+  </header>
+
+  <main class="slides" id="slides">
+
+    <!-- 1: Title -->
+    <section class="slide active">
+      <div class="kicker">Lecture 3 • SPI/COS 352</div>
+      <h1 class="big">Protecting <span class="accent">Your Likeness</span><br/>Right of Publicity, Privacy & <span class="accent2">AI</span></h1>
+      <h2>Peter Henderson, J.D., Ph.D.<br/>Assistant Professor of Computer Science & Public Affairs</h2>
+      <div class="polaris-branding">
+        <div class="polaris-logo">
+          <img src="https://www.polarislab.org//Logo%20alternative.png" alt="Polaris Lab" class="logo-image" />
+          <div class="polaris-text">Polaris Lab</div>
+        </div>
+      </div>
+      <p style="color:var(--muted); font-size: .8rem;">Some content inspired by Prof. Michael D. Murray's Art Law.</p>
+    </section>
+
+    <!-- 2: Brandeis & Warren -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Brandeis & Warren</span> (1890)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">No right of privacy in the United States before 1900.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Brandeis and Warren wrote Harvard Law Review article in 1890, laying the groundwork for 20th century privacy and right of publicity law.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">And you thought law review articles didn't matter!</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/harvard_law_review_right_to_privacy.png" alt="Harvard Law Review - The Right to Privacy" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 3: Roberson Facts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Roberson v. Rochester Folding Box Co.</em> (N.Y. 1902)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Boyfriend took photos claiming they were for a portrait.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">"Little did I realize what they were going to do with it," she reminisced in 1967.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Her image appeared on 25,000 flour advertisements without permission or payment.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">"I take this opportunity," the then 21-year-old Abigail wrote to presidential candidate Parker, "to remind you that you have no such right as that which you assert.</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/franklin_mills_advertisement.png" alt="Roberson case illustration" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 4: Roberson Holding -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Roberson v. Rochester Folding Box Co.</em> (N.Y. 1902)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Sued for $15,000 damages and injunction.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">NY Court of Appeals: No "so-called" privacy right exists. Privacy violations are "ills that under the law cannot be redressed." Legislators, not courts, should create such laws. Brandeis and Warren were wrong.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">Written by four judges in Majority, among them, Chief Judge Alton Parker and Judge Denis O’Brien.</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/alton_parker_roberson_v_rochefort.png" alt="Chief Judge Alton Parker" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 5: Roberson Aftermath -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Roberson v. Rochester Folding Box Co.</em> (N.Y. 1902)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh; max-height: 70vh;">
+        <div>
+          <div style="font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.4; color: #e8e8e8; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div>
+              <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Public outcry over the injustice, leading to Judges defending their decision (unusual!).</p>
+              <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">O'Brien in Columbia Law Review: "The right of privacy...cannot be regulated by law."</p>
+              <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Parker runs for office: During 1904 campaign, complained about paparazzi invading his family's privacy.</p>
+            </div>
+            <div>
+              <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">"I reserve the right to put my hand in my pockets...without having to be everlastingly afraid that I shall be snapped by some fellow with a camera."</p>
+              <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic;">"I take this opportunity," Abigail wrote to presidential candidate Parker in a NYTimes piece, "to remind you that you have no such right as that which you assert."</p>
+            </div>
+          </div>
+          <p style="margin-top: 2rem;"><a href="https://history.nycourts.gov/wp-content/uploads/2019/01/Judicial-Notice-04.pdf#page=03" target="_blank" rel="noopener" style="color:var(--accent2)">Read more about the story here!</a></p>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/nytimesclipping.png" alt="Roberson case aftermath" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: Roberson's Lasting Impact -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Roberson's</em> Lasting Impact</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh; max-height: 70vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Abigail Roberson's case, along with the public outcry (and maybe the Presidential candidates griping) motivated the Legislature to change the law so that others after her could win.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">NY Legislature passed Civil Rights Law Sections 50 and 51 - making invasion of privacy a misdemeanor and allowing private right of action. <strong>First privacy law statute!</strong></p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">But the Court has consistently and as recently as 2000 invoked Roberson to hold that no common law right of privacy exists in New York. <em>See, e.g., Messenger v. Gruner + Jahr Printing & Publishing</em>, 94 N.Y.2d 436, 441, 706 N.Y.S.2d 52 (2000).</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/nytimesclipping.png" alt="Roberson case aftermath" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 7: NY Civil Rights Law Statutes -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">New York Civil Rights Law</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+          <div>
+            <h3 style="color: var(--accent); font-size: 1.8rem; margin-bottom: 1rem;">Section 50</h3>
+            <div style="font-size: 1.4rem; line-height: 1.6; color: #e8e8e8; background: rgba(255,255,255,.05); padding: 1.2rem; border-radius: 12px; border-left: 4px solid var(--accent);">
+              <p style="margin-bottom: 1rem;"><strong>A person, firm or corporation that uses for advertising purposes, or for the purposes of trade, the name, portrait or picture of any living person without having first obtained the written consent of such person, or if a minor of his or her parent or guardian, is guilty of a misdemeanor.</strong></p>
+            </div>
+          </div>
+          <div>
+            <h3 style="color: var(--accent2); font-size: 1.8rem; margin-bottom: 1rem;">Section 51</h3>
+            <div style="font-size: 1.4rem; line-height: 1.6; color: #e8e8e8; background: rgba(255,255,255,.05); padding: 1.2rem; border-radius: 12px; border-left: 4px solid var(--accent2);">
+              <p style="margin-bottom: 1rem;"><strong>Any person whose name, portrait, picture or voice is used within this state for advertising purposes or for the purposes of trade without the written consent first obtained as above provided may maintain an equitable action in the supreme court of this state against the person, firm or corporation so using his name, portrait, picture or voice, to prevent and restrain the use thereof; and may also sue and recover damages for any injuries sustained by reason of such use...</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8: Pavesich -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Pavesich v. N. England Mut. Life Ins. Co</em> (Ga. 1905)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Pavesich's image used in insurance advertising without permission, despite being portrayed as the "successful" person who purchased the insurance.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Georgia Supreme Court recognized privacy rights under "natural law" principle, guided by Brandeis and Warren's foundational Harvard Law Review article</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent);"><strong>Georgia becomes the first state to recognize common law privacy claims</strong></p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/life_insurance_advertisement_1903.png" alt="Life insurance advertisement" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 11: States with Right of Publicity Statutes -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">States with Right of Publicity Statutes</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 70vh;">
+          <img src="analyzed_images/newropmap_transparent.png" alt="US right of publicity map" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="background: rgba(34, 197, 94, 0.9); color: white; padding: 1rem 2rem; border-radius: 12px; margin-top: 2rem; font-size: 1.4rem; font-weight: 600; border: 2px solid #22c55e; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);">
+            Right of publicity statute exists in state
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11: Privacy vs Publicity Rights Overview -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Making sense of the state-specific mess of rights that developed</h1>
+      </div>
+      
+      <!-- Top section with two boxes side by side -->
+      <div style="margin-top: 12vh; margin-bottom: 2vh; padding: 0 4vw;">
+        <div style="display: flex; gap: 1.5vw;">
+          <!-- Privacy Torts Box -->
+          <div style="flex: 1; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1.2rem; border: 1px solid rgba(255,255,255,0.1);">
+            <h2 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.4rem; text-align: center;">Four Privacy Torts</h2>
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <img src="analyzed_images/posnerscreenshot.png" alt="Posner screenshot - Four Privacy Torts" style="width: 100%; max-width: 250px; height: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 3px 12px rgba(0,0,0,.3);">
+            </div>
+            <div style="font-size: 1.1rem; line-height: 1.4; color: #e8e8e8;">
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent);"><strong>Intrusion:</strong> Upon plaintiff's seclusion or solitude</p>
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent2);"><strong>Public Disclosure:</strong> Of embarrassing private facts</p>
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent);"><strong>False Light:</strong> Places plaintiff in false light</p>
+              <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Appropriation:</strong> Of plaintiff's name or likeness</p>
+            </div>
+          </div>
+          
+          <!-- Publicity Rights Box -->
+          <div style="flex: 1; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1.2rem; border: 1px solid rgba(255,255,255,0.1);">
+            <h2 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.4rem; text-align: center;">Four Publicity Rights</h2>
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <img src="analyzed_images/postrothman.png" alt="Post-Rothman - Four Publicity Rights" style="width: 100%; max-width: 250px; height: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 3px 12px rgba(0,0,0,.3);">
+            </div>
+            <div style="font-size: 1.1rem; line-height: 1.4; color: #e8e8e8;">
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent);"><strong>Performances:</strong> Artistic and creative works</p>
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent2);"><strong>Commercial Value:</strong> Of identity and likeness</p>
+              <p style="margin-bottom: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent);"><strong>Autonomy:</strong> Of personality and self-determination</p>
+              <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Dignity:</strong> Of personality and reputation</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lower section for overlap claims -->
+      <div style="padding: 0 4vw;">
+        <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1.2rem; border: 1px solid rgba(255,255,255,0.1);">
+          <h2 style="color: var(--accent); margin-bottom: 0.8rem; font-size: 1.4rem; text-align: center;">Unauthorized identity use may also implicate:</h2>
+          <div style="font-size: 1.1rem; line-height: 1.4; color: #e8e8e8; text-align: center;">
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem; margin-top: 0.8rem;">
+
+              <div style="padding: 0.6rem 1.2rem; background: rgba(255,255,255,0.1); border-radius: 6px; border-left: 2px solid var(--accent2);">
+                <strong>Defamation</strong><br>
+                <span style="font-size: 0.95rem; opacity: 0.8;">Harm to reputation due to false statement</span>
+              </div>
+              <div style="padding: 0.6rem 1.2rem; background: rgba(255,255,255,0.1); border-radius: 6px; border-left: 2px solid var(--accent);">
+                <strong>Trademark</strong><br>
+                <span style="font-size: 0.95rem; opacity: 0.8;">Commercial use of registered trademark</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <!-- 12: Discussion Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10; text-align: center;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; color: #d4a574;">Breakout Question</h1>
+      </div>
+      
+      <!-- Pull Quote -->
+      <div style="position: absolute; top: 15vh; left: 50%; transform: translateX(-50%); width: 70vw; max-width: 1100px; margin-bottom: 2rem;">
+        <blockquote style="background: rgba(255,255,255,0.07); border-left: 5px solid var(--accent2); border-radius: 8px; padding: 1.2rem 2rem; font-size: 1.35rem; color: #e8e8e8; font-style: italic; margin: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.12);">
+          “At the root of contemporary... confusion lies a failure to articulate the precise state interests advanced by the right of publicity.”
+          <br>
+          <span style="display: block; margin-top: 0.7rem; font-size: 1.05rem; color: #bfae9c; font-style: normal;">— Post &amp; Rothman (Yale L.J. 2020)</span>
+        </blockquote>
+      </div>
+
+      <div style="position: absolute; top: 28vh; left: 50%; transform: translateX(-50%); width: 80vw; max-width: 1200px; margin-top: 2rem;">
+        <div style="background: rgba(0,0,0,0.3); border: 2px solid #444; border-radius: 12px; padding: 2rem; text-align: left;">
+          <p style="font-size: clamp(1.4rem, 5vw, 3rem); line-height: 1.4; color: #ff8c42; font-weight: bold; margin: 0; ">
+            What are some public policy reasons why you might want a right of publicity? What about some reasons against? How would you articulate those rights? What would/wouldn't you protect, be precise? <strong>Discuss with those around you, each group will give reasons <span style="color: var(--accent);">for</span> and <span style="color: var(--accent2);">against.</span>  [5-7 minutes]
+          </p>
+        </div>
+      </div>
+      
+      <div style="position: absolute; top: 43vh; left: 8vw; right: 8vw; text-align: center;">
+        <p style="font-size: clamp(1.2rem, 2.5vw, 1.8rem); color: #e8e8e8; margin-bottom: 1rem;">
+        </p>
+      </div>
+    </section>
+
+    <!-- Section I Break -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section I Complete</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="font-size: 1.8rem; line-height: 1.8; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <p style="margin-top: 2rem; font-size: 5rem; color: var(--muted);">Done: Origins (basics)</p>
+
+          <p style="margin-top: 2rem; font-size: 5rem; color: var(--muted);">Next: Doctrinal Landscape</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section II Start: Doctrinal Landscape -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section II: <span class="accent2">Doctrinal Landscape</span></h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="font-size: 1.8rem; line-height: 1.8; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <p style="margin-top: 2rem; font-size: 5rem; color: var(--muted);">What's protected? And what are the limits?</p>
+          <div style="font-size: 1.3rem; color: var(--muted); margin-top: 0.5rem;">
+            <em>Note: non-comprehensive due to the state-by-state nature.</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+        <!-- 14.9: Edison v. Edison Polyform - Name/Likeness -->
+        <section class="slide">
+          <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+            <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Name/Likeness: Edison v. Edison Polyform Mfg. Co.</em>, 73 N.J. Eq. 136, 67 A. 392 (1907)</h1>
+          </div>
+          <div class="two-col" style="margin-top: 12vh;">
+            <div>
+              <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8; margin-top: 14rem;">
+                <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Defendant sells remedy under the name of Thomas Edison without his consent, and falsely represented that Edison invented the formula and used it himself.</p>
+                <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Court, using an idea of "false endorsement," puts a stop to it.</strong></p>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <img src="analyzed_images/edison_polyform_advertisement.png" alt="Edison Polyform advertisement" style="width: 100%; max-width: 700px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            </div>
+          </div>
+        </section>
+    
+
+
+    <!-- 14.7: Zacchini v. Scripps-Howard Broadcasting Co. -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Performance: Zacchini v. Scripps-Howard Broadcasting Co.</em> (1977)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Zacchini sued TV station for violating his right of publicity by broadcasting his entire 15-second "Human Cannonball" act on the news.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">TV station asserted First Amendment Defense</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Rejected by the U.S. Supreme Court:</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">"[T]he State's interest in permitting a 'right of publicity' is in protecting the proprietary interest of the individual in his act in part to encourage such activity....[T]he State's interest is closely analogous to the goals of patent and copyright law, focusing on the right of the individual to reap the reward of his endeavors...."</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/zacchini.png" alt="Zacchini Human Cannonball poster" style="width: 100%; max-width: 1000px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+      
+      <!-- Question bubble at bottom -->
+      <div style="position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); z-index: 10;">
+        <div style="background: rgba(255,255,255,0.1); border: 2px solid var(--accent2); border-radius: 20px; padding: 1.5rem 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,.4); backdrop-filter: blur(10px);">
+          <p style="font-size: clamp(1.4rem, 2.5vw, 2rem); color: var(--accent2); font-weight: 600; margin: 0; text-align: center; line-height: 1.3;">
+            What's the difference between performance and what's protected by copyright?
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14.8: Midler v. Ford Motor Co. -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Voice: Midler v. Ford Motor Co.</em> (9th Cir. 1988)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Midler turned down Ford's offer to use her recording of 'Do You Want to Dance' for commercial</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Ford hired backup singer to perform the song and mimic Midler</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic;">"[W]hen a distinctive voice of a professional singer is widely known and is deliberately imitated in order to sell a product, the sellers have appropriated what is not theirs and have committed a tort in California."</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <div style="position: relative; width: 100%; max-width: 800px;">
+            <video 
+              id="midlerVideo" 
+              width="100%" 
+              height="600" 
+              controls 
+              preload="metadata"
+              style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+              <source src="midler_ford_commercial.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+        <!-- 14.10: Waits v. Frito Lay -->
+        <section class="slide">
+          <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+            <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Voice: Waits v. Frito Lay</em> (9th Cir. 1992)</h1>
+          </div>
+          <div class="two-col" style="margin-top: 12vh;">
+            <div>
+              <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+                <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Song sung in the 'style' of Tom Waits (similarly hiring someone who can mimic their voice)</p>
+                <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Allowed punitive damages, finding malice where Frito Lay was aware of his opposition to commercial endorsement and damage to his artistic integrity.</p>
+                <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">"now by law I have what I always felt I had...a distinctive voice".</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+              <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 500px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                  <h3 style="color: var(--accent2); margin: 0; font-size: 1.2rem;">Doritos Commercial - Tom Waits Impersonator</h3>
+                </div>
+                
+                <!-- Custom Audio Player -->
+                <div style="position: relative;">
+                  <audio id="tomWaitsAudio" preload="metadata" style="width: 100%;">
+                    <source src="tom_waits_doritos.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>
+                  
+                  <!-- Waveform Visualization -->
+                  <div id="waveform" style="height: 60px; background: rgba(0,0,0,0.3); border-radius: 8px; margin: 1rem 0; position: relative; overflow: hidden;">
+                    <canvas id="waveformCanvas" width="400" height="60" style="width: 100%; height: 100%;"></canvas>
+                    <div id="progressBar" style="position: absolute; top: 0; left: 0; height: 100%; background: rgba(212, 165, 116, 0.3); width: 0%; transition: width 0.1s ease;"></div>
+                  </div>
+                  
+                  <!-- Custom Controls -->
+                  <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                    <button id="playPauseBtn" style="background: var(--accent2); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">▶</button>
+                    <div style="flex: 1; display: flex; align-items: center; gap: 0.5rem;">
+                      <span id="currentTime" style="color: var(--muted); font-size: 0.9rem; min-width: 40px;">0:00</span>
+                      <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; cursor: pointer;" id="seekBar">
+                        <div id="seekProgress" style="height: 100%; background: var(--accent2); border-radius: 2px; width: 0%;"></div>
+                      </div>
+                      <span id="duration" style="color: var(--muted); font-size: 0.9rem; min-width: 40px;">0:00</span>
+                    </div>
+                    <button id="volumeBtn" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px;">🔊</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+
+    <!-- 14.11: Carson v. Here's Johnny Portable Toilets -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Catchphrases Associated with Likeness: Carson v. Here's Johnny Portable Toilets</em> (6th Cir. 1983)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Company used "Here's Johnny" catchphrase for portable toilet business</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">"If the celebrity's identity is commercially exploited, there has been an invasion of his right whether or not his 'name or likeness' is used. Carson's identity may be exploited even if his name John W. Carson, or his picture is not used."</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <img src="analyzed_images/johnny.png" alt="Johnny Carson" style="width: 700px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 14.12: Hulk Hogan Commercial Discussion -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Hulk Hogan Commercial Discussion</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.8rem; line-height: 1.8; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; font-size: 2.5rem; color: var(--accent);">What do you think?</p>
+            <ul style="text-align: left;">
+              <li>Does this violate Hulk Hogan's right of publicity?</li>
+              <li>What elements of his identity are being used? Is this enough?</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <video 
+            id="hulkHoganVideo" 
+            width="100%" 
+            height="400" 
+            controls 
+            preload="metadata"
+            style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <source src="hulk_hogan_commercial.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+
+   
+    <!-- 14.5: Balancing Right of Publicity Against other rights -->
+    <section class="slide">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <h1 style="margin: 0; font-size: clamp(3rem, 6vw, 5rem); font-weight: bold; text-align: center;">
+          Balancing Right of Publicity Against other rights
+        </h1>
+      </div>
+    </section>
+
+        <!-- Different Bases for Rights -->
+        <section class="slide">
+          <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+            <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; text-align: center;">
+              Different <span class="accent2">Bases</span> for Rights
+            </h1>
+            <p style="text-align: center; font-size: 1.4rem; color: var(--muted); margin-top: 1rem;">
+              Theoretical Foundations
+            </p>
+          </div>
+          
+          <div style="margin-top: 18vh; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div style="text-align: center;">
+    
+              
+              <div style="display: flex; flex-direction: column; gap: 2.5rem; margin-top: 2rem;">
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--stroke); border-radius: 20px; padding: 3rem; backdrop-filter: blur(10px);">
+                  <h3 style="color: var(--accent2); font-size: 2.2rem; margin: 0 0 1.5rem 0; font-weight: 700;">Property</h3>
+                  <p style="font-size: 1.8rem; color: #d7dbe2; margin: 0; line-height: 1.4;">Commercial value & economic interests—less likely to match up against First Amendment.</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--stroke); border-radius: 20px; padding: 3rem; backdrop-filter: blur(10px);">
+                  <h3 style="color: var(--accent2); font-size: 2.2rem; margin: 0 0 1.5rem 0; font-weight: 700;">Intellectual Property</h3>
+                  <p style="font-size: 1.8rem; color: #d7dbe2; margin: 0; line-height: 1.4;">Creative works & proprietary rights—but utilitarian, public good might balance out (quasi-fair use).</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--stroke); border-radius: 20px; padding: 3rem; backdrop-filter: blur(10px);">
+                  <h3 style="color: var(--accent2); font-size: 2.2rem; margin: 0 0 1.5rem 0; font-weight: 700;">Equity</h3>
+                  <p style="font-size: 1.8rem; color: #d7dbe2; margin: 0; line-height: 1.4;">Fairness & good faith principles play a role.</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--stroke); border-radius: 20px; padding: 3rem; backdrop-filter: blur(10px);">
+                  <h3 style="color: var(--accent2); font-size: 2.2rem; margin: 0 0 1.5rem 0; font-weight: 700;">Tort-like</h3>
+                  <p style="font-size: 1.8rem; color: #d7dbe2; margin: 0; line-height: 1.4;">Personal injury & privacy protection, focus on redress for wrongs.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+    <!-- 14.6: Keller v. Electronic Arts Inc. -->
+    <section class="slide">
+      <div style="position: absolute; top: 6vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Keller v. Electronic Arts Inc.</em>, 724 F.3d 1268 (9th Cir. 2013)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 8vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Samuel Keller, former college football player, sued EA for using his likeness in NCAA Football video game without consent. Game featured avatars with same jersey numbers, physical characteristics, and playing styles as real athletes, but not their names. EA argued First Amendment protection as expressive work; Keller claimed right-of-publicity violation.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Holding:</strong> Ninth Circuit held EA's use was NOT protected by First Amendment under transformative use test. Avatars were literal depictions performing same activities in realistic setting—not transformative.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic;"><strong>Note: The test is a transformativeness test, treating this as an intellectual property right.</strong></p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+          <img src="analyzed_images/kellerea_transparent.png" alt="Keller v EA case" style="width: 100%; max-width: 1000px; height: auto; object-fit: cover; object-position: center; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+    <!-- 15: Time, Inc. v. Hill -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Time, Inc. v. Hill</em>, 385 U.S. 374 (1967)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; margin-top: 14rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">1952: Hill family held hostage; later fictionalized in novel and play</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Life Magazine article about play contained inaccuracies about Hill family's experience</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Hill sued Life's owner (Time) for false misrepresentation; case reached Supreme Court</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Court ruled 5-4 in favor of Time; <strong>Says "actual malice" needed to balance freedom of press rights.</strong></p>
+          </div>
+          <br>
+          <div style="text-align: center; margin-top: 1.2rem;">
+            <div style="display: inline-block; background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #232323; font-weight: 800; padding: 0.7rem 2rem; border-radius: 999px; font-size: 2rem; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 4px 16px rgba(212, 165, 116, 0.3);">
+              💡 Trivia: Hill's counsel was future president Richard M. Nixon
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <img src="analyzed_images/time_inc_v_hill.png" alt="Time Inc v Hill case" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <img src="analyzed_images/desperate_hours_poster.png" alt="The Desperate Hours movie poster" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 15: Nussenzweig (facts) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Nussenzweig v. diCorcia</em> (2007)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Nussenzweig photographed by diCorcia in Times Square in Manhattan.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">The images were exhibited at Pace/MacGill Gallery for a month. Pace/MacGill then published them in a book of diCorcia's work titled Heads.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">DiCorcia created ten limited edition prints of each photograph in the book and they were sold for US$20,000 to US$30,000 each.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent);">In 2005, Nussenzweig learned of the photograph and filed a lawsuit, claiming that diCorcia and Pace/MacGill had violated his privacy rights under Sections 50 and 51 of New York's Civil Rights Law</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/anonymized_man_privacy.png" alt="Nussenzweig street photograph" style="width: 700px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 16: Nussenzweig outcome -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Nussenzweig v. diCorcia</em> (2007)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Nussenzweig, a Klausenburg Orthodox Jew, stated that such a display would violate the Commandment in Torah against graven images.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">DiCorcia argued that the photograph represented "artistic expression", and was protected under the First Amendment.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent);"><strong>Who wins?</strong></p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/anonymized_man_privacy.png" alt="Nussenzweig street photograph" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 16.5: Nussenzweig Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Nussenzweig v. diCorcia</em> — Answer</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="">
+          <h2 style="color: var(--accent2); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem;">Who wins?</h2>
+          <div style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: #FF0000; margin-bottom: 2rem;">
+            DiCorcia won.
+          </div>
+
+              <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+                "The Court of Appeals has repeatedly held that the New York statutory right of privacy restricts the use of one's likeliness against use for advertising and trade only and nothing more. It is a strictly construed statute enacted with sensitivity to the potentially competing values of privacy protection versus free speech."
+              </blockquote>
+              <br/>
+              <div style="margin-top: 1rem;">
+                <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+                  "In recent years, some New York courts have addressed the issue whether an artistic use of an image is a use exempted from action under New York States Privacy Laws... They have consistently found 'art' to be constitutionally protected free speech, that is so exempt. This court agrees."
+                </blockquote>
+              </div>
+              <br/>
+              <div style="margin-top: 1rem;">
+                <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+                  "While sensitive to plaintiff's distress, it is not redressable in the courts of civil law... These examples illustrate the extent to which the constitutional exceptions to privacy will be upheld, notwithstanding that the speech or art may have unintended devastating consequences on the subject, or may even be repugnant."
+                </blockquote>
+              </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17: Foster v. Svenson (facts) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Foster v. Svenson</em> (N.Y. 2015)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Arne Svenson uses high-rise apartment and telephoto lens to capture neighbors without their knowledge.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Titles art project "The Neighbors" and captures their intimate moments and daily routine.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Sells the photos, photos are used by others and eventually identity and address of neighbors gets out. They sue to stop it, in particular concerned about images of their children.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Who wins?</strong></p>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <img src="analyzed_images/dog_through_window.png" alt="Dog through window photograph" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <img src="analyzed_images/legs_through_window.png" alt="Legs through window photograph" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 18: Foster v. Svenson (holding) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Foster v. Svenson</em> — Answer</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="">
+          <h2 style="color: var(--accent2); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem;">Who wins?</h2>
+          <div style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: #FF0000; margin-bottom: 2rem;">
+            Svenson won.
+          </div>
+          
+          <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+            "Works of art fall outside the prohibitions of the privacy statute under the newsworthy and public concerns exemption."
+          </blockquote>
+          <br/>
+          <div style="margin-top: 1rem;">
+            <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+              "Since the newsworthy and public concern exemption has been applied to many types of artistic expressions, including literature, movies and theater, it logically follows that it should also be applied equally to other modes of artistic expression."
+            </blockquote>
+          </div>
+          <br/>
+          <div style="margin-top: 1rem;">
+            <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+              "Needless to say, as illustrated by the troubling facts here, in these times of heightened threats to privacy posed by new and ever more invasive technologies, we call upon the Legislature to revisit this important issue, as we are constrained to apply the law as it exists."
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19: Artistic expression -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Basically: Art Good, Ads Bad</h1>
+      </div>
+      <div style="margin-top: 12vh;">
+        <ul style="font-size: 1.7rem; line-height: 1.7;">
+          <li>Art is speech, often bought and sold.</li>
+          <li>High First Amendment value can outweigh publicity claims.</li>
+          <li>But protection narrows when use is <strong>commercial speech</strong> (ads, endorsements).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 20: Hepp v Facebook (facts) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Hepp v. Facebook</em> (3d Cir. 2021)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Karen Hepp, Philadelphia newscaster, discovered her photo (taken without consent by convenience store security camera) was used in Facebook ads for dating services products.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">The image appeared in a Facebook advertisement for dating app FirstMet, encouraging users to "meet and chat with single women near you."</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Hepp sued Facebook under Pennsylvania right of publicity law. Facebook argued Section 230 immunity.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent);"><strong>Key question: Is right of publicity an IP right (exempt from Section 230) or a privacy tort?</strong></p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/heppanon.png" alt="Karen Hepp case" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 21: Hepp v Facebook (230) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Hepp v. Facebook</em> — Answer</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="">
+          <h2 style="color: var(--accent2); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem;">Who wins the 230 claim?</h2>
+          <div style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: #FF0000; margin-bottom: 2rem;">
+            Hepp wins.
+          </div>
+          
+          <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+            "In Zacchini, the Supreme Court explained the right of publicity is an individual property right that is 'closely analogous to . . . patent and copyright' because it focuses 'on the right of the individual to reap the reward of his endeavors and [has] little to do with protecting feelings or reputation.'"
+          </blockquote>
+          <br/>
+          <div style="margin-top: 1rem;">
+            <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+              "Like the right to publicity, trademarks secure commercial goodwill... So the right of publicity and trademark are close analogues."
+            </blockquote>
+          </div>
+          <br/>
+          <div style="margin-top: 1rem;">
+            <blockquote style="font-size: clamp(1.2rem, 2vw, 3rem); color: #d7dbe2; font-style: italic; margin: 0; line-height: 1.4;">
+              "We hold that Hepp's statutory claim against Facebook arises out of a law pertaining to intellectual property. For that reason, the § 230(e)(2) limit applies, and Facebook is not immune under § 230(c)."
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21.5: Copyright v. Right of Publicity -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Copyright</span> v. <span class="accent2">Right of Publicity</span></h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="font-size: 1.8rem; line-height: 1.8; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <p style="margin-top: 2rem; font-size: 5rem; color: var(--muted);">When do these rights conflict?</p>
+          <p style="margin-top: 2rem; font-size: 1.4rem; color: var(--accent2);">Preemption analysis in practice</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22: 50 Cent v Rick Ross (facts) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">50 Cent v. Rick Ross</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Jackson v. Roberts, No. 19-480 (2d Cir. Aug. 19, 2020) • Judge Pierre Leval</div>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Rick Ross's mixtape "Renzel Remixes" used 30-second sample of "In Da Club" + 50 Cent's name</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);"><strong>Key fact:</strong> 50 Cent does NOT hold the copyright—record label Shady/Aftermath does</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Connecticut common law right of publicity claim (court concluded CT would recognize this)</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2);">Mixtape distributed free online with 26 remixes, 11 featuring original artists (Adele, Lil Wayne, 50 Cent)</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/rick_ross_publicity_rights.png" alt="Rick Ross album cover" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 23: 50 Cent v Rick Ross (holding) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">50 Cent v. Rick Ross</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">The 2d Cir. U.S. Court of Appeals said this kind of right of is preempted by copyright law.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">If 50 cent can sue this way, interferes with copyright holder's exclusive control over the recording.</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/rick_ross_publicity_rights_1.png" alt="Rick Ross album cover" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- Transition: Post-Mortem Rights -->
+    <section class="slide">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <h1 style="margin: 0; font-size: clamp(3rem, 6vw, 5rem); font-weight: bold; text-align: center; color: var(--accent2);">
+          Post-Mortem Rights
+        </h1>
+      </div>
+    </section>
+
+    <!-- 25: Marilyn Monroe Estate -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Marilyn Monroe Estate</span> (post‑mortem rights)</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Milton H. Greene Archives, Inc. v. Marilyn Monroe LLC, No. 08-56471 (9th Cir.)</div>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.4; color: #e8e8e8;">
+            <p style="margin-bottom: 1.5rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Estate claimed she died in NY (estate tax reasons saving them money at the time), but NY has no post‑mortem publicity right; CA recognizes one (50 years, then extended).</p>
+            <p style="margin-bottom: 1.5rem; padding-left: 1rem; border-left: 3px solid var(--accent2);"></p>
+            <p style="margin-bottom: 1.5rem; padding-left: 1rem; border-left: 3px solid var(--accent);"><strong>CA9 Court of Appeals:</strong> Marilyn Monroe LLC is judicially estopped from taking the litigation position that Monroe died domiciled in California.... Because Monroe died domiciled in New York, New York law applies to the right-of-publicity question.... Because no such right exists under New York law, Monroe LLC did not inherit it through the residual clause of Monroe's will and cannot enforce it against Milton Greene or others similarly situated."</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic;">Contrast: Elvis died in Tennessee, which has no time limits on post-mortem rights—his estate continues lucrative licensing.</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/marilyn_monroe_publicity_rights.png" alt="Marilyn Monroe Estate case" style="width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Section IV Break -->
+    <section class="slide">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <h1 style="margin: 0; font-size: clamp(3rem, 6vw, 5rem); font-weight: bold; text-align: center;">
+          Break; Next: <span class="accent2">AI and Right of Publicity</span>
+        </h1>
+      </div>
+    </section>
+
+    <!-- AI Hypo 1: Drake/Tupac -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Drake voice clones Tupac</span></h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.4; color: #e8e8e8;">
+            <ul style="list-style: none; padding: 0;">
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Right of publicity? Copyright? Neither?</li>
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Any other considerations here?</li>
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Who wins? Arguments for or against?</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <img src="analyzed_images/tupac_shakur_performance.png" alt="Tupac Shakur performing" style="width: 100%; max-width: 800px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Hypo 2: Scarlett Johansson/OpenAI -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Scarlett Johansson/OpenAI</span></h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.4; color: #e8e8e8;">
+            <ul style="list-style: none; padding: 0;">
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Right of publicity? Copyright? Neither?</li>
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Any other considerations here?</li>
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• Who wins? Arguments for or against?</li>
+              <li style="margin-bottom: 1.5rem; font-size: 1.7em;">• How do you determine if the voice is similar enough?</li>
+              <li style="margin-bottom: 0; font-size: 1.7em;">• What if two people have a similar voice?</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <img src="analyzed_images/johansson_openai_publicityrights.png" alt="Scarlett Johansson" style="width: 100%; max-width: 800px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Hypo 2.5: Scarlett Johansson Additional Facts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Scarlett Johansson/OpenAI</span> — Additional Facts</h1>
+      </div>
+      <div style="margin-top: 12vh;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; margin-top: 6rem;">
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <img src="analyzed_images/openai_gpt4o_her_post.png" alt="OpenAI GPT-4o Her post" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-top: 6rem;">
+            <img src="analyzed_images/chatgpt_voice_selection.png" alt="ChatGPT voice selection process" style="width: 100%; max-width: 800px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <img src="analyzed_images/conneau_openai_departure_socialmedia.png" alt="Alexis Conneau OpenAI departure" style="width: 100%; max-width: 800px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <h2 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: bold; color: var(--accent2); margin: 0;">
+            Does that change anything?
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Hypo 3: Taylor Swift Political Endorsement -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Taylor Swift Political Endorsement</span></h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+          <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; max-width: 1200px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <img src="analyzed_images/taylor_swift_ai_endorsement.png" alt="Taylor Swift AI Biden endorsement" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 8px;">
+
+          </div>
+
+        </div>
+        <div style="font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.4; color: #e8e8e8;">
+          <ul style="list-style: none; padding: 0; text-align: left; max-width: 800px; margin: 0 auto;">
+            <li style="margin-bottom: 1.5rem;">• Right of publicity? Copyright? Neither?</li>
+            <li style="margin-bottom: 1.5rem;">• Any other considerations here?</li>
+            <li style="margin-bottom: 0;">• Who wins? Arguments for or against?</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Taylor Swift Political Endorsement</span> — Response</h1>
+      </div>
+      <div style="margin-top: 12vh; text-align: center;">
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 3rem;">
+          <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <img src="analyzed_images/taylorswiftresponse.png" alt="Taylor Swift response" style="width: 100%; height: auto; object-fit: contain; border-radius: 8px;">
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: bold; color: var(--accent2); margin: 0; line-height: 1.3;">
+            How do you sue memified content?<br/>
+            Is regulation the answer or is Taylor's the better approach?
+          </h2>
+        </div>
+      </div>
+    </section>
+
+  
+    <!-- Main Sequence Ltd. v. Dudesy LLC (George Carlin) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Main Sequence Ltd. v. Dudesy LLC</em> (C.D. Cal. 2024)</h1>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Podcast <em>Dudesy</em> released "George Carlin: I'm Glad I'm Dead" — an AI-generated routine mimicking Carlin's voice, cadence, and themes.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Carlin's estate sued for copyright and right-of-publicity violations.</p>
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);"><strong>Resolution:</strong> Stipulated consent judgment & permanent injunction. Dudesy agreed to remove the special and stop using Carlin's image/voice/likeness without permission.</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">Among the first high-profile AI deepfake disputes to end in an injunction-based settlement.</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="analyzed_images/dudsey.png" alt="George Carlin Dudesy case" style="width: min(90vw, 900px); max-width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- Vacker v. ElevenLabs -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Vacker v. ElevenLabs</em> (D. Del. 2024)</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Is training for the purpose of voice cloning different?</div>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Facts? Claims?</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">Do you think training is different?</p>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <img src="https://eleven-public-cdn.elevenlabs.io/payloadcms/x1b6d7s30d-ElevenLabsBlogLogo.webp" alt="ElevenLabs voice cloning interface" style="width: min(90vw, 900px); max-width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+    </section>
+
+    <!-- 14.9: Lehrman v. Lovo Facts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Lehrman v. Lovo</em> (S.D.N.Y. 2025)</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">AI Voice Cloning Case</div>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Voice actors Paul Lehrman and Linnea Sage hired via Fiverr for "research purposes only"</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Lovo used recordings to train AI and create voice clones "Kyle Snow" and "Sally Coleman"</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Lovo marketed clones as having "full commercial rights" for subscribers</p>
+            <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent2); font-style: italic;">How do you assess the infringement claim versus the RoP claims? </p>  
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <h3 style="color: var(--accent2); margin: 0; font-size: 1.2rem;">The Claims</h3>
+            </div>
+            <div style="font-size: 1.4rem; line-height: 1.6; color: #e8e8e8;">
+              <p style="margin-bottom: 1rem;">• Copyright infringement</p>
+              <p style="margin-bottom: 1rem;">• NY Civil Rights Law §50-51</p>
+              <p style="margin-bottom: 0;">• Among others</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14.9.5: Lehrman v. Lovo Holdings -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><em>Lehrman v. Lovo</em> - Court's Ruling</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Motion to Dismiss: Granted in Part, Denied in Part</div>
+      </div>
+      <div class="two-col" style="margin-top: 12vh;">
+        <div>
+          <div style="font-size: 1.7rem; line-height: 1.7; color: #e8e8e8;">
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Copyright claims mostly dismissed: AI outputs are "independent fixation" not copying, but another case where court says plaintiffs should have done a better job and claims may have survived.</p>
+            <p style="margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--accent);">NY Civil Rights Law claims survive: digital voice clones covered by §50-51</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center; align-items: center;">
+          <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <h3 style="color: var(--accent2); margin: 0; font-size: 1.2rem;">Final Result</h3>
+            </div>
+            <div style="font-size: 1.4rem; line-height: 1.6; color: #e8e8e8;">
+              <p style="margin-bottom: 1rem;"><strong>✓ Survived:</strong> NY Civil Rights Law §50-51</p>
+              <p style="margin-bottom: 0;"><strong>✗ Dismissed:</strong> most Copyright claims</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- East–West Divide: AI & Publicity Rights -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">The Modern East–West Divide: AI & Publicity Rights</h1>
+        <div class="kicker" style="margin-top: 0.5rem;">New York §50‑f vs. California §3344.1 (AB 1836)</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="font-size:1.15rem;line-height:1.6;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;">
+            <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent);">
+              <h3 style="margin:0 0 1rem 0;color:var(--accent);font-size:1.8rem;">New York — Civil Rights Law §50‑f</h3>
+              <ul style="margin:.5rem 0 0 1.2rem;font-size:1.1rem;">
+                <li style="margin-bottom:0.8rem;">Post‑mortem right for <em>deceased performers/personalities</em> (40 years).</li>
+                <li style="margin-bottom:0.8rem;">Minimum statutory damages: <strong>$2,000</strong> per violation (no special bump for digital replicas).</li>
+                <li style="margin-bottom:0.8rem;">Liability for <em>digital replicas</em> only in narrow contexts: 
+                  scripted audiovisual works (as fictional characters) or <em>live musical performance</em>, and likely to deceive — with a clear‑disclaimer safe harbor.</li>
+                <li style="margin-bottom:0;">Broad exceptions: news, political, documentary/biographical works; NY does <em>not</em> recognize a common‑law publicity right.</li>
+              </ul>
+            </div>
+            <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent2);">
+              <h3 style="margin:0 0 1rem 0;color:var(--accent2);font-size:1.8rem;">California — Civ. Code §3344.1 (as amended by AB 1836)</h3>
+              <ul style="margin:.5rem 0 0 1.2rem;font-size:1.1rem;">
+                <li style="margin-bottom:0.8rem;">Creates explicit cause of action for <em>digital replicas</em> of deceased personalities' voice or likeness (with enumerated exceptions).</li>
+                <li style="margin-bottom:0.8rem;">Higher minimum damages for <em>digital replicas</em>: <strong>$10,000</strong> per use (vs. $750 baseline for other uses).</li>
+                <li style="margin-bottom:0.8rem;">Two tracks: commercial uses (§3344.1(a)(1)(A)) and uses in expressive works (§3344.1(a)(2)(A)), each with carve‑outs (news, comment, parody, etc.).</li>
+                <li style="margin-bottom:0;">Common‑law publicity claims remain available alongside the statute.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="margin-top:2rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.5rem;">
+            <strong class="warn" style="font-size:1.2rem;">Takeaway:</strong> CA's regime is more expansive and punitive for AI <em>digital replicas</em>; NY's is narrower, with specific deception/fiction requirements and a disclaimer safe harbor.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bubble at bottom with NY Senate bill link -->
+      <div style="position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); z-index: 10;">
+        <div style="background: rgba(255,255,255,0.1); border: 2px solid var(--accent2); border-radius: 20px; padding: 1.5rem 2.5rem; box-shadow: 0 8px 32px rgba(0,0,0,.4); backdrop-filter: blur(10px);">
+          <p style="font-size: clamp(1.4rem, 2.5vw, 2rem); color: var(--accent2); font-weight: 600; margin: 0; text-align: center; line-height: 1.3;">
+            <a href="https://www.nysenate.gov/legislation/bills/2025/S8391" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: none;">
+              New York may change this soon! (See, e.g.,  Senate Bill S8391.)
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Break Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+        <h1 style="margin: 0; font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1; color: var(--accent);">Break</h1>
+        <div style="margin-top: 2rem; font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--muted);">Questions?</div>
+      </div>
+    </section>
+
+    <!-- Other Claims Section Header -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Other <span class="accent">Claims</span></h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Beyond Right of Publicity</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.4; color: #e8e8e8;">
+          <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent);">While right of publicity gets most attention in AI cases, other legal theories are increasingly important.</p>
+          <p style="margin-bottom: 2rem; padding-left: 1rem; border-left: 3px solid var(--accent2);">Biometric privacy laws, wiretapping statutes, and computer fraud laws are being used to challenge AI training practices.</p>
+          <p style="margin-bottom: 0; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic;">These cases often have stronger statutory damages and clearer consent requirements.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIPA Introduction -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Biometric Information Privacy Act <span class="accent">(BIPA)</span></h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Illinois 740 ILCS 14/1 et seq. (2008)</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+          <!-- Left side: BIPA Definitions -->
+          <div>
+            <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:2rem;">
+              <h3 style="margin:0 0 1rem 0;color:var(--accent);font-size:1.8rem;">Statutory Definition</h3>
+              <div style="font-size:1.1rem;line-height:1.5;color:#e8e8e8;">
+                <p style="margin-bottom:1rem;"><strong>"Biometric identifier"</strong> means a retina or iris scan, fingerprint, voiceprint, or scan of hand or face geometry.</p>
+                <p style="margin-bottom:0;"><strong>"Biometric information"</strong> means any information, regardless of how it is captured, converted, stored, or shared, based on an individual's biometric identifier used to identify an individual.</p>
+                <p style="margin-top:1rem;font-style:italic;font-size:0.9rem;">740 ILCS 14/10</p>
+              </div>
+            </div>
+            <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent2);">
+              <h3 style="margin:0 0 1rem 0;color:var(--accent2);font-size:1.8rem;">Consequences of Storage</h3>
+              <div style="font-size:1.1rem;line-height:1.5;color:#e8e8e8;">
+                <p style="margin-bottom:1rem;"><strong>Written consent required</strong> before collection or storage.</p>
+                <p style="margin-bottom:1rem;"><strong>Retention limits:</strong> Must destroy when purpose satisfied or within 3 years of last interaction.</p>
+                <p style="margin-bottom:1rem;"><strong>No sale/profit:</strong> Cannot sell, lease, trade, or profit from biometric data.</p>
+                <p style="margin-bottom:0;"><strong>Statutory damages:</strong> $1,000-$5,000 per violation (no proof of harm required).</p>
+              </div>
+            </div>
+          </div>
+          <!-- Right side: Face Geometry Image -->
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <img src="analyzed_images/ChatGPT Image Sep 18, 2025, 12_15_07 PM.png" alt="Face geometry visualization" style="width: 100%; max-width: 600px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIPA High-Profile Cases -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">High-Profile <span class="accent">BIPA Cases</span></h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Major Settlements & Precedents</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+          <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent);">
+            <h3 style="margin:0 0 1rem 0;color:var(--accent);font-size:1.6rem;">Facebook (Meta)</h3>
+            <div style="font-size:1.1rem;line-height:1.5;color:#e8e8e8;">
+              <p style="margin-bottom:1rem;"><strong>$650 million settlement (2021)</strong></p>
+              <p style="margin-bottom:1rem;">Described as a "make-or-break moment" for BIPA litigation.</p>
+              <p style="margin-bottom:0;">Allegations of unlawful collection of facial geometry data through Facebook's photo-tagging feature.</p>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent2);">
+            <h3 style="margin:0 0 1rem 0;color:var(--accent2);font-size:1.6rem;">Google</h3>
+            <div style="font-size:1.1rem;line-height:1.5;color:#e8e8e8;">
+              <p style="margin-bottom:1rem;"><strong>$100 million settlement (2022)</strong></p>
+              <p style="margin-bottom:1rem;">Resolved class action alleging Google's Photos app used face-recognition technology.</p>
+              <p style="margin-bottom:0;">Violation: Used face-recognition without explicit consent required by BIPA.</p>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent);">
+            <h3 style="margin:0 0 1rem 0;color:var(--accent);font-size:1.6rem;">TikTok</h3>
+            <div style="font-size:1.1rem;line-height:1.5;color:#e8e8e8;">
+              <p style="margin-bottom:1rem;"><strong>$92 million settlement (2021)</strong></p>
+              <p style="margin-bottom:1rem;">TikTok's parent company agreed to settlement.</p>
+              <p style="margin-bottom:0;">Alleged violation: Collected user face and voice data without consent.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.5rem;">
+          <strong class="warn" style="font-size:1.2rem;">Total Impact:</strong> Over $840 million in BIPA settlements from just these three cases, demonstrating the significant financial risks of non-compliance with biometric privacy laws.
+        </div>
+      </div>
+    </section>
+
+    <!-- Group Discussion: Technical Details -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Group <span class="accent">Discussion</span></h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Technical Details & Legal Analysis</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw;">
+        <div style="background:rgba(255,255,255,.06);padding:3rem;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:2rem;">
+          <h3 style="margin:0 0 2rem 0;color:var(--accent);font-size:2rem;text-align:center;">How can technical details affect the analysis?</h3>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+          <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent2);">
+            <div style="font-size:1.2rem;line-height:1.5;color:#e8e8e8;">
+              <p style="margin-bottom:1rem;">Does anything distinguish a multi-modal foundation model from these other situations?</p>
+
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent);">
+            <div style="font-size:1.2rem;line-height:1.5;color:#e8e8e8;">
+              <p style="margin-bottom:1rem;">What architectural changes or other mitigations might change this analysis?</p>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Be My Eyes Controversy -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Current Mitigations<span class="accent"> and Accessibility Trade-offs</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw; margin-top: 10rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <img src="analyzed_images/be_my_eyes_logo.png" alt="Be My Eyes logo" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            </div>
+            <div style="background:rgba(255,255,255,.06);padding:2rem;border-radius:12px;border-left:4px solid var(--accent2);">
+              <blockquote style="font-size:1.2rem;line-height:1.6;color:#e8e8e8;margin:0;font-style:italic;">
+                "These concerns are not unfounded. I've had it describe someone's hair as messy, and I've also had it give me someone's name without me even asking. It's not designed for this, but even though it's not designed for facial recognition, let's be very clear. It recognises faces."
+              </blockquote>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <img src="analyzed_images/claude_facial_recognition_policy.png" alt="Claude facial recognition policy" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: 4vh; left: 8vw; right: 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.8rem 1.5rem; backdrop-filter: blur(10px);">
+          <p style="font-size: 0.9rem; color: var(--muted); margin: 0;">
+            Source: <a href="https://vi.ie/this-face-looks-redacted-the-be-my-eyes-faces-controversy-explained/" target="_blank" style="color: var(--accent); text-decoration: none;">vi.ie/this-face-looks-redacted-the-be-my-eyes-faces-controversy-explained/</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Audio Language Models Research -->
+    <section class="slide">
+      <div style="position: absolute; top: 6vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">Audio Language Models<span class="accent"> and Privacy Risks</span></h1>
+        <div class="kicker" style="margin-top: 0.3rem; font-size: 1rem;">End-to-End vs. Cascaded Architecture</div>
+      </div>
+      <div style="margin-top: 10vh; padding: 0 4vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <img src="analyzed_images/papercoverendtoend.png" alt="Audio Language Model Architecture Comparison" style="max-width: 60%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <img src="analyzed_images/table_detection.png" alt="Audio LM Detection Capabilities" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            </div>
+            <div style="background:rgba(255,255,255,.06);padding:1.5rem;border-radius:12px;border-left:4px solid var(--accent2);">
+              <p style="font-size:1rem;line-height:1.4;color:#e8e8e8;margin:0;">
+                If you can detect voices via a foundation model, does that mean the FM stores voiceprints according to BIPA?
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: 3vh; left: 8vw; right: 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.6rem 1.2rem; backdrop-filter: blur(10px);">
+          <p style="font-size: 0.8rem; color: var(--muted); margin: 0;">
+            Source: "The Model Hears You: Audio Language Model Deployments Should Consider the Principle of Least Privilege" (AIES,'25)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Take It Down Act -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Take It Down <span class="accent">Act</span></h1>
+        <div class="kicker" style="margin-top: 0.5rem;">Federal Legislation on AI-Generated Content</div>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 4vw; display: flex; justify-content: center; align-items: center; height: 70vh;">
+        <img src="https://www.activefence.com/wp-content/uploads/2025/05/Take-it-down-act.png" alt="Take It Down Act legislation overview" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+      </div>
+      <div style="position: absolute; bottom: 4vh; left: 8vw; right: 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.8rem 1.5rem; backdrop-filter: blur(10px);">
+          <p style="font-size: 1rem; color: var(--accent2); margin: 0; font-weight: 600;">
+            📝 Note: We will discuss this legislation in more detail in the First Amendment section
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer>
+    <div class="pill">Slide <span id="index">1</span>/<span id="total">53</span></div>
+    <div class="pill">© for teaching use • Not legal advice</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const idxEl = document.getElementById('index');
+  const totalEl = document.getElementById('total');
+  const prog = document.getElementById('progressbar');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const deck = document.querySelector('.deck');
+  totalEl.textContent = total;
+  
+  function getSlideFromHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/slide-(\d+)/);
+    if (match) {
+      const slideNum = parseInt(match[1]) - 1; 
+      if (slideNum >= 0 && slideNum < total) {
+        return slideNum;
+      }
+    }
+    return 0; 
+  }
+  
+  let i = getSlideFromHash();
+
+  function render(){
+    slides.forEach((s, j)=>{ 
+      s.classList.toggle('active', j===i); 
+    });
+    idxEl.textContent = i+1;
+    prog.style.width = ((i+1)/total*100).toFixed(1)+'%';
+    window.location.hash = `slide-${i+1}`;
+    
+    // Clear any cached embeds when changing slides
+    clearEmbeddedContent();
+  }
+  
+  function clearEmbeddedContent() {
+    // Reset all iframes to prevent cross-slide contamination
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      const currentSlide = iframe.closest('.slide');
+      if (!currentSlide.classList.contains('active')) {
+        // Add cache-busting parameter to force reload
+        const url = new URL(iframe.src);
+        url.searchParams.set('cache_bust', Date.now());
+        iframe.src = url.toString();
+      }
+    });
+    
+    // Also pause any audio elements on inactive slides
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      const currentSlide = audio.closest('.slide');
+      if (!currentSlide.classList.contains('active')) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+  }
+  
+  function next(){ if(i<total-1){ i++; render(); } }
+  function prev(){ if(i>0){ i--; render(); } }
+  
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+      if (deck.requestFullscreen) {
+        deck.requestFullscreen();
+      } else if (deck.webkitRequestFullscreen) {
+        deck.webkitRequestFullscreen();
+      } else if (deck.mozRequestFullScreen) {
+        deck.mozRequestFullScreen();
+      } else if (deck.msRequestFullscreen) {
+        deck.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  
+  window.addEventListener('hashchange', () => {
+    i = getSlideFromHash();
+    render();
+  });
+  
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown') next();
+    if(e.key==='ArrowLeft'  || e.key==='PageUp')   prev();
+    if(e.key==='f' || e.key==='F' || e.key==='F11') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  });
+
+  render();
+  buildAssetGallery();
+
+  // Custom Audio Player with Waveform
+  function initTomWaitsAudioPlayer() {
+    const audio = document.getElementById('tomWaitsAudio');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+    const seekBar = document.getElementById('seekBar');
+    const seekProgress = document.getElementById('seekProgress');
+    const progressBar = document.getElementById('progressBar');
+    const canvas = document.getElementById('waveformCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let isPlaying = false;
+    let waveformData = [];
+    
+    // Generate simple waveform visualization
+    function generateWaveform() {
+      const width = canvas.width;
+      const height = canvas.height;
+      const barCount = 100;
+      const barWidth = width / barCount;
+      
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Generate random waveform data for visualization
+      for (let i = 0; i < barCount; i++) {
+        const barHeight = Math.random() * height * 0.8;
+        const x = i * barWidth;
+        const y = (height - barHeight) / 2;
+        
+        ctx.fillStyle = `rgba(212, 165, 116, ${0.3 + Math.random() * 0.7})`;
+        ctx.fillRect(x, y, barWidth - 1, barHeight);
+      }
+    }
+    
+    // Format time
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // Update progress
+    function updateProgress() {
+      if (audio.duration) {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        seekProgress.style.width = progress + '%';
+        progressBar.style.width = progress + '%';
+        currentTimeSpan.textContent = formatTime(audio.currentTime);
+      }
+    }
+    
+    // Event listeners
+    audio.addEventListener('loadedmetadata', () => {
+      durationSpan.textContent = formatTime(audio.duration);
+      generateWaveform();
+    });
+    
+    audio.addEventListener('timeupdate', updateProgress);
+    
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      playPauseBtn.textContent = '▶';
+      seekProgress.style.width = '0%';
+      progressBar.style.width = '0%';
+    });
+    
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = '▶';
+        isPlaying = false;
+      } else {
+        audio.play();
+        playPauseBtn.textContent = '⏸';
+        isPlaying = true;
+      }
+    });
+    
+    seekBar.addEventListener('click', (e) => {
+      const rect = seekBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = clickX / rect.width;
+      audio.currentTime = percentage * audio.duration;
+    });
+  }
+  
+  // Initialize audio player when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTomWaitsAudioPlayer);
+  } else {
+    initTomWaitsAudioPlayer();
+  }
+
+  // Dynamically populate the gallery with local files by predictable names
+  function buildAssetGallery(){
+    const wrap = document.getElementById('assetGallery');
+    if(!wrap) return;
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
+    grid.style.gap = '12px';
+
+    const pad2 = n => String(n).padStart(2,'0');
+
+    function addTile(src, label){
+      const fig = document.createElement('figure');
+      fig.style.margin = '0';
+      fig.style.background = 'rgba(255,255,255,.03)';
+      fig.style.border = '1px solid var(--stroke)';
+      fig.style.borderRadius = '10px';
+      fig.style.overflow = 'hidden';
+      fig.style.boxShadow = 'var(--shadow)';
+
+      const img = new Image();
+      img.src = src;
+      img.style.width = '100%';
+      img.style.height = '160px';
+      img.style.objectFit = 'cover';
+      img.loading = 'lazy';
+      img.onerror = () => { fig.remove(); };
+
+      const cap = document.createElement('figcaption');
+      cap.textContent = label;
+      cap.style.fontSize = '.85rem';
+      cap.style.padding = '.5rem .75rem';
+      cap.style.color = 'var(--muted)';
+
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      grid.appendChild(fig);
+    }
+
+    // Page previews (page_01.png .. page_60.png)
+    for(let i=1;i<=60;i++){
+      const file = `images/page_${pad2(i)}.png`;
+      addTile(file, file);
+    }
+
+    // Extracted images (img_pNN_MM with png/jpeg)
+    const tryAdd = (p, m) => {
+      const bases = [
+        `images/img_p${pad2(p)}_${pad2(m)}.png`,
+        `images/img_p${pad2(p)}_${pad2(m)}.jpeg`,
+        `images/img_p${pad2(p)}_${pad2(m)}.jpg`
+      ];
+      // create an offscreen preloader chain to only keep ones that exist
+      (function tryNext(k){
+        if(k>=bases.length) return; // nothing
+        const test = new Image();
+        test.onload = () => { addTile(bases[k], bases[k]); };
+        test.onerror = () => { tryNext(k+1); };
+        test.src = bases[k];
+      })(0);
+    };
+
+    for(let p=1;p<=60;p++){
+      for(let m=1;m<=8;m++){
+        tryAdd(p,m);
+      }
+    }
+
+    wrap.appendChild(grid);
+  }
+
+})();
+  </script>
+
+</body>
+</html>
