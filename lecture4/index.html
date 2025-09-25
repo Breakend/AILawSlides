@@ -1,0 +1,2518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AI and Torts — Lecture 4</title>
+<style>
+  :root{
+    --bg: #000000; /* website dark primary */
+    --fg: #ffffff; /* website text primary */
+    --muted: #b0b0b0; /* website text secondary */
+    --accent: #D4A574; /* website accent color */
+    --accent2: #E6B887; /* website accent hover */
+    --ok: #34d399; --warn: #f59e0b; --bad: #f87171;
+    --glass: rgba(0,0,0,.8);
+    --stroke: rgba(255,255,255,.12);
+    --shadow: 0 4px 12px rgba(0,0,0,.3);
+  }
+  html, body { height:100%; }
+  body{
+    margin:0; color:var(--fg); background: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+    overflow:hidden;
+  }
+  /* Deck layout */
+  .deck{ 
+    height:100%; 
+    display:grid; 
+    grid-template-rows:auto 1fr auto; 
+    transform: scale(0.75);
+    transform-origin: top left;
+    width: 133.33%; /* 100% / 0.75 = 133.33% to compensate for scaling */
+    height: 133.33%;
+  }
+  header, footer{ display:flex; align-items:center; gap:.75rem; padding:.75rem 1rem; backdrop-filter: blur(10px); background:var(--glass); box-shadow:var(--shadow); z-index:20; }
+  header{ border-bottom:1px solid var(--stroke); }
+  footer{ border-top:1px solid var(--stroke); justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:.65rem; font-weight:800; letter-spacing:.4px; }
+  .brand .dot{ width:.65rem; height:.65rem; border-radius:50%; background:conic-gradient(from 0deg, var(--accent), var(--accent2)); box-shadow:0 0 20px rgba(99,102,241,.8); }
+  .progress{ position:relative; height:6px; flex:1; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+  .progress>span{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2)); box-shadow:0 0 18px rgba(99,102,241,.6); }
+  .controls{ display:flex; align-items:center; gap:.5rem; }
+  .btn{ appearance:none; border:1px solid var(--stroke); background:rgba(255,255,255,.04); color:var(--fg); padding:.5rem .8rem; border-radius:999px; cursor:pointer; font-weight:700; }
+  .btn:hover{ border-color:rgba(255,255,255,.28); background:rgba(255,255,255,.08); }
+  
+  /* Fullscreen styles */
+  .deck:fullscreen{ background: var(--bg); }
+  .deck:fullscreen header, .deck:fullscreen footer{ backdrop-filter: blur(20px); }
+  .deck:-webkit-full-screen{ background: var(--bg); }
+  .deck:-moz-full-screen{ background: var(--bg); }
+  .deck:-ms-fullscreen{ background: var(--bg); }
+
+  /* Slides */
+  .slides{ position:relative; height:100%; overflow:hidden; }
+  .slide{ position:absolute; inset:0; padding:8vh 8vw; display:none; flex-direction:column; justify-content:center; gap:1.2rem; }
+  .slide.active{ display:flex; }
+
+  /* Full‑bleed imagery */
+  .cover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; opacity:.28; filter:grayscale(100%) contrast(1.05) brightness(.6); }
+  .overlay{ position:absolute; inset:0; z-index:1; background: radial-gradient(60% 60% at 20% 20%, rgba(0,0,0,.35), transparent 60%), linear-gradient(180deg, rgba(4,6,12,.75), transparent 40%); }
+  .slide>*{ position:relative; z-index:2; }
+  .credit{ position:absolute; right:1rem; bottom:1rem; z-index:3; font-size:.8rem; color:#c3c7cf; background:rgba(0,0,0,.42); padding:.25rem .5rem; border-radius:8px; border:1px solid rgba(255,255,255,.12); }
+
+  h1{ margin:0; font-size: clamp(3rem, 6vw, 5rem); line-height:1.05; letter-spacing:.2px; text-shadow:0 4px 32px rgba(0,0,0,.35); }
+  h2{ margin:0; font-size: clamp(1.8rem, 4vw, 2.5rem); color:#d4d8df; }
+  p, li{ font-size: clamp(1.8rem, 3vw, 2.4rem); color:#d7dbe2; }
+  .kicker{ text-transform:uppercase; letter-spacing:.2em; color:var(--muted); font-weight:800; font-size:1.2rem; }
+  .big{ font-size: clamp(3rem, 6vw, 5rem); font-weight:900; letter-spacing:.2px; }
+  .accent{ color:var(--accent); }
+  .accent2{ color:var(--accent2); }
+  .pill{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--stroke); background:rgba(255,255,255,.06); padding:.3rem .7rem; border-radius:999px; font-size:.9rem; }
+
+  /* Branding */
+  .polaris-branding{ 
+    margin-top: 2rem; 
+    display: flex; 
+    justify-content: center; 
+  }
+  .polaris-logo{ 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+  }
+  .logo-image{ 
+    height: 2.5rem; 
+    width: auto; 
+    filter: brightness(0) invert(1); 
+  }
+  .polaris-text{ 
+    font-size: 1.5rem; 
+    font-weight: 300; 
+    color: var(--fg); 
+    letter-spacing: 0.3em; 
+    text-transform: uppercase; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+  }
+
+  /* Two-column layout */
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; }
+  @media (max-width: 768px) { .two-col{ grid-template-columns:1fr; } }
+
+  /* Print */
+  @media print{
+    body{ overflow:visible; }
+    header, footer{ display:none; }
+    .slide{ position:relative; display:block !important; page-break-after: always; }
+    .slide ul, .slide ol, .card, .grid, .two-col { display:block !important; }
+  }
+
+  /* Question slide styles */
+  .question-slide {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .question-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 3rem;
+  }
+  
+  .question-box {
+    background: rgba(255,255,255,.05);
+    border: 2px solid var(--accent2);
+    border-radius: 16px;
+    padding: 3rem 4rem;
+    max-width: 800px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  
+  .question-text {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    line-height: 1.4;
+    color: var(--accent2);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Interactive highlighting styles */
+  .highlightable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin: -0.5rem;
+  }
+  
+  .highlightable:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .highlighted {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+  }
+  
+  .highlight-banner {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+  }
+  
+  .highlighted-blue {
+    background: rgba(0, 100, 255, 0.2) !important;
+    border: 2px solid #0066ff !important;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.3) !important;
+  }
+  
+  .privacy-list.highlighted {
+    background: rgba(255, 255, 0, 0.2) !important;
+    border: 2px solid #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: -1rem;
+  }
+  
+</style>
+</head>
+<body>
+<div class="deck">
+  <header>
+    <div class="brand"><span class="dot"></span><span>Torts & Section 230</span></div>
+    <div class="progress" aria-label="progress"><span id="progressbar"></span></div>
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Previous (←)">← Prev</button>
+      <button class="btn" id="nextBtn" title="Next (→)">Next →</button>
+      <button class="btn" id="fullscreenBtn" title="Fullscreen (F)">⛶</button>
+    </div>
+  </header>
+
+  <main class="slides" id="slides">
+
+    <!-- 1: Title -->
+    <section class="slide active">
+      <div class="kicker">Lecture 3 • SPI/COS 352</div>
+      <h1 class="big">Torts & <span class="accent">Section 230</span><br/>— and How They Apply to <span class="accent2">AI</span></h1>
+      <h2>Peter Henderson, J.D., Ph.D.<br/>Assistant Professor of Computer Science & Public Affairs</h2>
+      <div class="polaris-branding">
+        <div class="polaris-logo">
+          <img src="https://www.polarislab.org//Logo%20alternative.png" alt="Polaris Lab" class="logo-image" />
+          <div class="polaris-text">Polaris Lab</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 2: Content Warning -->
+    <section class="slide">
+      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; padding: 4rem;">
+        <h1 style="margin: 0 0 3rem 0; font-size: clamp(3rem, 8vw, 6rem); line-height: 1.1; color: var(--warn); font-weight: 800;">Content Warning</h1>
+        
+        <div style="background: rgba(0, 0, 0, 0.7); padding: 4rem; border-radius: 20px; max-width: 1500px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.6; color: var(--fg); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);">
+          <p style="margin-bottom: 2rem; color: var(--fg); font-size: clamp(1.8rem, 3.5vw, 3.5rem);">Torts inherently deal with real harm, so we may briefly touch on difficult topics. Please feel free to step out at any time.</p>
+          <p style="margin-bottom: 3rem; color: var(--fg); font-size: clamp(1.8rem, 3.5vw, 3.5rem);">If you ever need support, there are resources available:</p>
+          <div style="margin-top: 3rem;">
+            <p style="margin-bottom: 1.5rem; color: var(--accent2); font-weight: 700; font-size: clamp(2rem, 4vw, 4rem);">📞 609-258-3141</p>
+            <p style="margin-bottom: 0; color: var(--accent2); font-weight: 700; font-size: clamp(2rem, 4vw, 4rem);">🌐 https://uhs.princeton.edu/counseling-psychological-services</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5: Torts are… complicated -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Torts are, largely, state law—and that means lots of variance.</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+
+        
+        <!-- Maps Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div style="text-align: center;">
+            <img src="https://instituteforlegalreform.com/wp-content/uploads/2023/03/Figure-5.jpg" alt="Tort Reform Map" style="width: 100%; height: auto; max-height: 40vh; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div class="credit" style="position: relative; margin-top: 0.5rem; font-size: 0.8rem; color: #c3c7cf;">Institute for Legal Reform</div>
+          </div>
+          <div style="text-align: center;">
+            <img src="https://ultratrust.com/images/articles/map-of-state-ranking-of-number-of-torts.jpg" alt="State Tort Rankings Map" style="width: 100%; height: auto; max-height: 40vh; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div class="credit" style="position: relative; margin-top: 0.5rem; font-size: 0.8rem; color: #c3c7cf;">UltraTrust</div>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div style="text-align: center;">
+            <img src="https://www.facingsouth.org/sites/default/files/styles/wide/public/images/map_noneconomic_damages_caps.png?itok=beBfnVEP" alt="Non-Economic Damages Caps Map" style="width: 100%; height: auto; max-height: 40vh; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div class="credit" style="position: relative; margin-top: 0.5rem; font-size: 0.8rem; color: #c3c7cf;">Facing South</div>
+          </div>
+          <div style="text-align: center;">
+            <img src="https://www.newsbatch.com/tort-punlimits.jpg" alt="Tort Punitive Limits Map" style="width: 100%; height: auto; max-height: 40vh; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div class="credit" style="position: relative; margin-top: 0.5rem; font-size: 0.8rem; color: #c3c7cf;">NewsBatch</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: What are torts? (Question) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">What are <span class="accent">torts</span>?</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>Name some torts!
+            <!-- <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">You can consider examples from everyday life...</em> -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7: What are torts? (Answer) -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">What are <span class="accent">torts</span>?</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1600px; margin: 0 auto;">
+          <p style="margin-bottom: 3rem; padding-left: 1rem;  text-align: left; font-size: clamp(2rem, 3.5vw, 4rem);">Civil liability arising from a civil wrong that causes harm or injury to another person</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem;">
+            <!-- Intentional Torts Box -->
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; text-align: left;">
+              <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 4rem); font-weight: 700; color: var(--accent2); text-align: center;">Intentional Torts</h3>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Battery</li>
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Assault</li>
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">False Imprisonment</li>
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Intentional Infliction of Emotional Distress</li>
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Some privacy claims</li>
+              </ul>
+            </div>
+            
+            <!-- Unintentional Torts Box -->
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; text-align: left;">
+              <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 4rem); font-weight: 700; color: var(--accent); text-align: center;">Unintentional Torts</h3>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent);">Negligence</li>
+                <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent);">Strict Liability</li>
+                <ul style="list-style: none; padding: 0; margin: 0; margin-left: 1rem;">
+                  <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.5rem; padding-left: 1rem; border-left: 1px solid var(--accent); font-size: 0.9em;">• Ownership of animals</li>
+                  <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0.5rem; padding-left: 1rem; border-left: 1px solid var(--accent); font-size: 0.9em;">• Abnormally Dangerous Activities</li>
+                  <li style="font-size: clamp(1.8rem, 3vw, 4rem); margin-bottom: 0; padding-left: 1rem; border-left: 1px solid var(--accent); font-size: 0.9em;">• Products Liability</li>
+                </ul>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What is a "tortfeasor"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Tortfeasor:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Person who commits the tort</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What does "liable" mean?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Liable:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Whether the tortfeasor is "guilty" of the tort</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What are "damages"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Damages:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Money the tortfeasor has to pay as a remedy for the harm inflicted</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What are "compensatory damages"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Compensatory Damages:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Restore the plaintiff (insofar as possible) to their state before the tort, usually with economic compensation</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What are "punitive damages"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Punitive Damages:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Additional damages as "punishment" for culpable or egregious conduct (5% of cases)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What is an "injunction"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Injunction:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Court orders tortfeasor to cease conduct</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What is the "Restatement of Torts"?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Restatement of Torts:</p>
+            <p style="margin-bottom: 0; margin-top: 1rem;">Group of legal scholars try to come up with a unified theory based on 50-state surveys</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21: Tort Terminology - Question -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 5rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>Are torts criminal or civil?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22: Tort Terminology - Answer -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Tort Terminology</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; max-width: 1000px; margin: 0 auto;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8;">
+            <p style="margin-bottom: 0; font-weight: 700; color: var(--accent);">Torts are criminal or civil?</p>
+            <p style="margin-bottom: 0; margin-top: 1rem; font-weight: 700; color: var(--accent2);">Civil</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16: Negligence as a Tort -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Negligence as a <span class="accent">Tort</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1000px; margin: 0 auto;">
+          <p style="margin-bottom: 3rem; padding-left: 1rem; border-left: 3px solid var(--accent);">The four elements required to prove negligence:</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">1</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Duty of Reasonable Care</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The defendant owed a duty to the plaintiff</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">2</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Breach</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The defendant failed to meet the standard of care</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">3</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Causation</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The breach caused the plaintiff's injury</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">4</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Harm and Resulting Damages</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The plaintiff suffered actual harm or injury</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Negligence as a <span class="accent">Tort</span></h1>
+        </div>
+        <div style="margin-top: 12vh; padding: 0 8vw;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1000px; margin: 0 auto;">
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+              <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">1</div>
+                  <div>
+                    <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Duty of Reasonable Care</h3>
+                    <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The defendant owed a duty to the plaintiff</p>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <!-- 17: Negligence as a Tort -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Duty of <span class="accent">Reasonable Care</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1600px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; margin-bottom: 2rem;">
+            <blockquote style="margin: 0; padding-left: 2rem; border-left: 3px solid var(--accent2); font-style: italic; color: var(--accent2);">
+              "Primary factors to consider in ascertaining whether a person's conduct lacks reasonable care are the 
+              <b style="color: grey; font-weight:900;">foreseeable</b> likelihood that the conduct will result in harm, the 
+              <b style="color: grey; font-weight:900;">foreseeable</b> severity of any harm that may ensue, and the burden of precautions to eliminate or reduce the risk of harm."
+              <span style="display:block; margin-top:1.2rem; color:var(--muted); font-size:1.1rem; font-style:normal;">
+                — Restatement (Third) of Torts
+              </span>
+              <br><br>
+              "A defendant owes a duty of care to all persons who are 
+              <b style="color: grey; font-weight:900;">foreseeably</b> endangered by his conduct, with respect to all risks which make the conduct unreasonably dangerous."
+              <span style="display:block; margin-top:1.2rem; color:var(--muted); font-size:1.1rem; font-style:normal;">
+                — Rodriguez v. Bethlehem Steel Corp., 12 Cal. 3d 382, 399 (Cal. 1974)
+              </span>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18: Negligence as a Tort: Duty -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Maynard v. Snapchat</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Case facts and large Snapchat phone image -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Facts:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Snapchat speedometer filter showed speedometer overlayed on top of video from phone camera</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Viral challenge showing users trying to "win" by showing highest speed</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Three teenagers died in car crash while using the filter</li>
+              <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Plaintiffs claimed Snapchat was negligent in creating the filter</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right Column: Two images stacked -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+          <img src="lecture4_images/page018_img02.png" alt="Car speedometer" style="width: 100%; max-width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <img src="lecture4_images/page018_img03.png" alt="Snapchat warning" style="width: 100%; max-width: 300px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+
+      <!-- Case citation at bottom right -->
+      <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+        Maynard v. Snapchat, Inc., 313 Ga. 533, 870 S.E.2d 739 (Ga. 2022)
+      </div>
+    </section>
+
+    <!-- 19: Question Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Maynard v. Snapchat</span></h1>
+      </div>
+      <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            <br/>Duty of Reasonable Care? Foreseeable?<br/><br/>
+            <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Discuss for 3 minutes...</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20: Outcome Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Outcome: <span class="accent">Maynard v. Snapchat</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Outcome text in box -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Outcome:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Duty: Georgia Supreme Court rejected "no duty if user misbehaves" rule</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Breach: Inadequate warnings and design encouraged speeding</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right Column: Two images stacked -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+          <img src="lecture4_images/page018_img02.png" alt="Car speedometer" style="width: 100%; max-width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <img src="lecture4_images/page018_img03.png" alt="Snapchat warning" style="width: 100%; max-width: 300px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+
+      <!-- Case citation at bottom right -->
+      <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+        Maynard v. Snapchat, Inc., 313 Ga. 533, 870 S.E.2d 739 (Ga. 2022)
+      </div>
+    </section>
+
+    <!-- 21: Winter v. G.P. Putnam's Sons Facts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Winter v. G.P. Putnam's Sons</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Case facts -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Facts:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Plaintiffs purchased "The Encyclopedia of Mushrooms" published by G.P. Putnam's Sons</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Relying on book descriptions, they consumed wild mushrooms identified as safe</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Both became critically ill and required liver transplants</li>
+              <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Plaintiffs sued publisher for misrepresentation alleging erroneous information</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right Column: Two images stacked -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+          <img src="https://1879books.com/cdn/shop/files/0C9483BD-3F9D-4B98-A319-6E06C70813B4.jpg?v=1730939044&width=1445" alt="Mushroom guidebook" style="width: 100%; max-width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+
+      <!-- Case citation at bottom right -->
+      <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+        Winter v. G.P. Putnam's Sons, 938 F.2d 1033 (9th Cir. 1991)
+      </div>
+    </section>
+
+    <!-- 22: Winter Question Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Winter v. G.P. Putnam's Sons</span></h1>
+      </div>
+      <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            <br/>Publisher Liability? Duty of Care?<br/><br/>
+            <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Panel?</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23: Winter Outcome Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Outcome: <span class="accent">Winter v. G.P. Putnam's Sons</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Outcome text in box -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Outcome:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Duty: Ninth Circuit held publisher has no duty to guarantee book contents</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Breach: Publisher not liable for author's inaccurate information</li>
+              <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Policy: Imposing liability would create implicit guarantorship for all books</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right Column: Two images stacked -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="https://1879books.com/cdn/shop/files/0C9483BD-3F9D-4B98-A319-6E06C70813B4.jpg?v=1730939044&width=1445" alt="Mushroom guidebook" style="width: 100%; max-width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+
+      <!-- Case citation at bottom right -->
+      <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+        Winter v. G.P. Putnam's Sons, 938 F.2d 1033 (9th Cir. 1991)
+      </div>
+    </section>
+
+    <!-- 27: Comparative Analysis -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Comparative <span class="accent">Analysis</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Panelists:<br/>What differentiates Snapchat from the publisher in Winter v. G.P. Putnam's Sons?<br/><br/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20: Hypothetical -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Hypothetical</h1>
+      </div>
+      <div style="margin-top: 12vh; display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+        <img 
+          src="lecture4_images/page020_img01.png" 
+          alt="Hypothetical" 
+          style="width: min(90vw, 1100px); max-width: 100%; height: auto; display: block; object-fit: contain; border-radius: 16px; box-shadow: 0 12px 48px rgba(0,0,0,.5); margin: 0 auto;"
+        >
+      </div>
+    </section>
+
+
+    <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Negligence as a <span class="accent">Tort</span></h1>
+        </div>
+        <div style="margin-top: 12vh; padding: 0 8vw;">
+          <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1000px; margin: 0 auto;">
+            
+              
+              <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                  <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">2</div>
+                  <div>
+                    <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Breach</h3>
+                    <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The defendant failed to meet the standard of care</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </section>
+
+    <!-- 24: Hand Formula -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">The <span class="accent">Hand Formula</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Hand Formula explanation -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">The Formula:</h3>
+            <div style="font-size: clamp(1.6rem, 2.8vw, 2.2rem); line-height: 1.4; color: #e8e8e8; margin-bottom: 2rem;">
+              <div style="background: rgba(255,255,255,.05); border-radius: 8px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-weight: 700; color: var(--accent2);">B < (L)(P) = Breach of Duty</div>
+                <div style="font-size: 0.8em; color: var(--muted); margin-top: 0.5rem;">(assuming precaution is not taken)</div>
+              </div>
+              <div style="background: rgba(255,255,255,.05); border-radius: 8px; padding: 1.5rem; text-align: center;">
+                <div style="font-weight: 700; color: var(--accent2);">B >= (L)(P) = Reasonable care</div>
+              </div>
+            </div>
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              <div style="margin-bottom: 1rem;"><strong style="color: var(--accent);">P</strong> = Probability of harm</div>
+              <div style="margin-bottom: 1rem;"><strong style="color: var(--accent);">L</strong> = Magnitude of loss</div>
+              <div><strong style="color: var(--accent);">B</strong> = Burden of precaution</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Judge Learned Hand photo -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/LearnedHand1910a.jpg/500px-LearnedHand1910a.jpg" alt="Judge Learned Hand" style="width: 100%; max-width: 400px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+        </div>
+      </div>
+
+      <!-- Case citation at bottom right -->
+      <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+        United States v. Carroll Towing Co., 159 F.2d 169 (2d Cir. 1947)
+      </div>
+    </section>
+  
+    <!-- 25: Ford Pinto Facts (Breach) -->
+    <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Ford Pinto</span></h1>
+        </div>
+  
+        <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+          <!-- Left Column: Case facts -->
+
+  
+          <!-- Right Column: Ford Pinto image -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="lecture4_images/page023_img01.png" alt="Ford Pinto Design Defects" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+  
+        <!-- Case citation at bottom right -->
+        <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+          Grimshaw v. Ford Motor Co., 119 Cal. App. 3d 757 (1981)
+        </div>
+      </section>
+  
+      <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Ford Pinto</span></h1>
+        </div>
+  
+        <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+          <!-- Left Column: Case facts -->
+
+  
+          <!-- Right Column: Ford Pinto image -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="lecture4_images/page024_img01.png" alt="Ford Pinto Design Defects" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+  
+        <!-- Case citation at bottom right -->
+        <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+          Grimshaw v. Ford Motor Co., 119 Cal. App. 3d 757 (1981)
+        </div>
+      </section>
+
+      <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Ford Pinto</span></h1>
+        </div>
+  
+        <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+          <!-- Left Column: Case facts -->
+
+  
+          <!-- Right Column: Ford Pinto image -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="lecture4_images/page025_img01.png" alt="Ford Pinto Design Defects" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+  
+        <!-- Case citation at bottom right -->
+        <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+          Grimshaw v. Ford Motor Co., 119 Cal. App. 3d 757 (1981)
+        </div>
+      </section>
+
+      <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Ford Pinto</span></h1>
+        </div>
+  
+        <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+          <!-- Left Column: Case facts -->
+
+  
+          <!-- Right Column: Ford Pinto image -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="lecture4_images/page026_img01.png" alt="Ford Pinto Design Defects" style="width: 100%; max-width: 1200px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+  
+        <!-- Case citation at bottom right -->
+        <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+          Grimshaw v. Ford Motor Co., 119 Cal. App. 3d 757 (1981)
+        </div>
+      </section>
+
+      <!-- 25: Ford Pinto Question Slide -->
+      <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Study: <span class="accent">Ford Pinto</span></h1>
+        </div>
+        <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+          <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+            <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+              <br/>If the Hand Formula is the right one, do you think Ford should've won the Pinto case if they did these calculations?<br/><br/>
+              <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Discuss for 3 minutes...</em>
+            </div>
+          </div>
+        </div>
+      </section>
+  
+      <!-- 26: Ford Pinto Outcome Slide -->
+      <section class="slide">
+        <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+          <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Case Outcome: <span class="accent">Ford Pinto</span></h1>
+        </div>
+  
+        <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+          <!-- Left Column: Outcome text in box -->
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+              <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Outcome:</h3>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+                <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Ford's cost-benefit analysis: $11 per vehicle vs. $200,000 per death</li>
+                <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Jury awarded $127.8M total damages ($125M punitive, $2.8M compensatory)</li>
+                <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Judge reduced punitive damages to $3.5M</li>
+              </ul>
+            </div>
+          </div>
+  
+          <!-- Right Column: Ford Pinto image -->
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+            <img src="lecture4_images/page023_img01.png" alt="Ford Pinto Cost-Benefit Analysis" style="width: 100%; max-width: 500px; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+  
+        <!-- Case citation at bottom right -->
+        <div style="position: absolute; bottom: 4vh; right: 8vw; font-size: 0.9rem; color: #c3c7cf;">
+          Grimshaw v. Ford Motor Co., 119 Cal. App. 3d 757 (1981)
+        </div>
+      </section>
+
+    <!-- 27: Law & Economics Approaches to AI Safety -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Law & Economics: <span class="accent">AI Safety</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 25vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: AI Safety concepts -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Applying Hand Formula to AI:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">B = Burden of AI safety measures (red-teaming, alignment, monitoring)</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">P = Probability of AI misuse or harmful outputs</li>
+              <li style="margin-bottom: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">L = Magnitude of potential harm (misinformation, bias, security risks)</li>
+            </ul>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
+
+    <!-- 29: AI Safety Question Slide -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">AI Safety <span class="accent">Discussion</span></h1>
+      </div>
+      <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            <br/>What constitutes a reaosonable percaution for the magnitude of risks? How much spend do you think is currently reasonable?<br/><br/>
+            <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Discuss for 3 minutes...</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 30: Negligence as a Tort - Causation -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Negligence as a <span class="accent">Tort</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1000px; margin: 0 auto;">
+          
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+              <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">3</div>
+              <div>
+                <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Causation</h3>
+                <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">The defendant's breach caused the plaintiff's harm</p>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- 28: Negligence: Proximate Causation -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Negligence: <span class="accent">Proximate Causation</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.05); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem;">
+          <div style="font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4; color: #e8e8e8;">
+            <strong style="color: var(--accent);">Proximate cause</strong> is one that, in a direct sequence unbroken by any superseding cause, produces the injury or event complained of, and without which the injury or event would not have happened. There can be more than one proximate cause.
+          </div>
+          <div style="font-size: clamp(1rem, 2vw, 1.4rem); color: var(--muted); margin-top: 1rem;">
+            Washington Civil Jury Instructions (WPI 15.01)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 29: Palsgraf - Initial Facts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page029_img01.png" alt="Plaintiff on platform" style="width: 70%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              Plaintiff was standing on a platform of defendant's railroad after buying a ticket to go to Rockaway Beach.
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page029_img02.png" alt="Train at station" style="width: 70%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              A train stopped at the station, bound for another place.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 30: Palsgraf - Men Running -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page030_img01.png" alt="Two men running" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              Two men ran forward to catch [the train].
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page030_img02.png" alt="Man reaching platform" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              One of the men reached the platform of the car without mishap, though the train was already moving.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 31: Palsgraf - Package and Guards -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page031_img01.png" alt="Man with package" style="width: 70%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              The other man, carrying a package, jumped aboard the [rail]car, but seemed unsteady as if about to fall.
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page031_img02.png" alt="Guards helping" style="width: 80%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              A guard on the [rail]car, who had held the door open, reached forward to help him in, and another guard on the platform pushed him from behind.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 32: Palsgraf - Package Falls -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page032_img01.png" alt="Package on rails" style="width: 80%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              In this act, the package was dislodged, and fell upon the rails.
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page032_img02.png" alt="Fireworks package" style="width: 80%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              It was a package of small size, about fifteen inches long, and was covered by a newspaper. In fact it contained fireworks, but there was nothing in its appearance to give notice of its contents.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 33: Palsgraf - Explosion -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page033_img01.png" alt="Fireworks exploding" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              The fireworks when they fell exploded.
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page033_img02.png" alt="Scales thrown down" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              The shock of the explosion threw down some scales at the other end of the platform, many feet away.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 34: Palsgraf - Scales and Injury -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page034_img01.png" alt="Scales striking plaintiff" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4); margin-bottom: 1rem;">
+            <div style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              "The scales struck the plaintiff, causing injuries for which she sues."
+            </div>
+          </div>
+          <!-- Right Column -->
+          <div>
+            <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: #e8e8e8; font-style: italic; font-weight: 600; margin-top: 2rem;">
+              Court says it was not foreseeable that the package was explosive, so the conductors are not on the hook. Incorporates foreseeability into proximate cause.
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+          Dall-E does Palsgraf by Bryant Walker Smith
+        </div>
+      </div>
+    </section>
+
+    <!-- 35: Palsgraf Veo Video -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Palsgraf</span> Video</h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw; display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+        <video 
+          src="Palsgraf_v_Long_Island_Railroad.mp4" 
+          controls 
+          style="width: min(90vw, 1200px); max-width: 100%; height: auto; border-radius: 16px; box-shadow: 0 12px 48px rgba(0,0,0,.5);"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </section>
+
+    <!-- 36: Palsgraf Court Verdict -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">The <span class="accent">Palsgraf</span> Verdict</h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem; margin-bottom: 2rem;">
+          <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Court's Holding:</h3>
+          <p style="margin-bottom: 1rem; font-weight: 600; color: var(--accent2); font-size: clamp(1.4rem, 2.5vw, 1.8rem);">It was not foreseeable that the package was explosive</p>
+          <p style="margin-bottom: 0; color: var(--muted); font-size: clamp(1.2rem, 2.2vw, 1.6rem);">Therefore, the conductors are not liable</p>
+        </div>
+        
+        <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+          <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Legal Principle:</h3>
+          <p style="margin-bottom: 0; font-weight: 600; color: var(--accent2); font-size: clamp(1.4rem, 2.5vw, 1.8rem);">Incorporates foreseeability into proximate cause analysis</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 37: Intervening Cause: Malicious Actors -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Intervening Cause: <span class="accent">Malicious Actors</span></h1>
+      </div>
+      <div style="margin-top: 20vh; padding: 0 8vw;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+          <!-- Left Column -->
+          <div>
+            <img src="lecture4_images/page035_img01.png" alt="Train derailment" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+          <!-- Right Column -->
+          <div>
+            <img src="lecture4_images/page035_img02.png" alt="Match igniting" style="width: 100%; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 36: Open Source Hypothetical Discussion -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Hypothetical: <span class="accent">Open-source Models</span></h1>
+      </div>
+      <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 900px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            <br/>A company releases an open-source AI model that gets fine-tuned by malicious actors to generate harmful content.<br/><br/>
+            <span style="font-size: clamp(1.2rem, 2.2vw, 1.6rem); color: #e8e8e8; font-weight: 400;">Should the original developers be liable for the downstream misuse?<br/><br/></span>
+            <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Panel discussion - 5 minutes...</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1: Title -->
+    <section class="slide">
+        <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+            <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;"> Product Liability for <span
+                    class="accent">AI</span> Systems </h1>
+        </div>
+        <div style="margin-top:28vh;padding:0 8vw;">
+            <div style="font-size:clamp(1.8rem,3.2vw,2.4rem);color:#e8e8e8;max-width:1200px;">
+                <div
+                    style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;">
+                    <p style="margin:0;color:var(--muted);font-size:clamp(1.3rem,2.2vw,1.6rem);"> How core product-liability
+                        rules map onto AI models, apps, and platforms—plus what recent cases mean for builders and
+                        deployers. </p>
+                </div>
+            </div>
+        </div>
+    </section> 
+
+    <!-- Transition Slide -->
+    <section class="slide">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center;">
+        <div style="font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; color: var(--accent);">
+          Product Liability <span style="color: var(--accent2);">Basics</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2: Primer on Product Liability -->
+    <section class="slide">
+        <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+            <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">Product Liability: <span
+                    class="accent">The Basics</span></h1>
+        </div>
+        <div style="margin-top:14vh;padding:0 8vw;">
+            <div style="font-size:clamp(2rem,3.5vw,2.8rem);line-height:1.3;color:#e8e8e8;max-width:1000px;margin:0 auto;">
+                <p style="margin-bottom: 3rem; padding-left: 1rem; border-left: 3px solid var(--accent);">Types of product liability defects:</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;"></div>
+                            <div>
+                                <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Manufacturing Defect</h3>
+                                <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Product departs from intended design</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;"></div>
+                            <div>
+                                <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Design Defect</h3>
+                                <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Risk–utility with reasonable alternative design (RAD) in many jurisdictions</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;"> </div>
+                            <div>
+                                <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Failure to Warn/Instruct</h3>
+                                <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Inadequate instructions or warnings render product unsafe</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;"></div>
+                            <div>
+                                <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Strict Liability (state-by-state)</h3>
+                                <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">For commercial sellers in the distribution chain; negligence can apply in parallel</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> <!-- 3: Is Software/AI a “Product”? -->
+    <section class="slide">
+        <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+            <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">Baseline Question: <span class="accent">Is Software/AI a "Product"?</span></h1>
+        </div>
+        <div style="margin-top:25vh;padding:0 8vw;text-align:center;">
+            <div style="background:rgba(255,255,255,.05);border:2px solid var(--accent2);border-radius:16px;padding:3rem 4rem;max-width:800px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.4);">
+                <div style="font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.4;color:var(--accent2);font-weight:600;">
+                    What does Winter v. G.P. Putnam's Sons say about information being a product?<br/><br/>
+                    <em style="color:var(--muted);font-size:0.8em;font-weight:400;">Panel?</em>
+                </div>
+            </div>
+        </div>
+    </section> 
+
+    <!-- Case Study: Netflix and Meow Media -->
+    <section class="slide">
+        <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+            <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">Case Study: <span class="accent">Estate of B.H. v. Netflix, Inc.</span> & <span class="accent">James v. Meow Media</span></h1>
+        </div>
+
+        <div style="display:flex;margin-top:25vh;padding:0 8vw;gap:4vw;align-items:flex-start;">
+            <!-- Left Column: Meow Media quote -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;">
+                <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;margin-bottom:2rem;width:100%;">
+                    <h3 style="margin-bottom:1.5rem;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:var(--accent);">James v. Meow Media:</h3>
+                    <blockquote style="margin:0;padding-left:2rem;border-left:3px solid var(--accent2);font-style:italic;color:#e8e8e8;font-size:clamp(1.4rem,2.5vw,1.8rem);line-height:1.4;">
+                        "intangible thoughts, ideas, and messages contained within games, movies, and website materials are not products for purposes of strict products liability"
+                    </blockquote>
+                    <p style="margin:1rem 0 0 0;font-size:clamp(1.1rem,1.8vw,1.3rem);color:var(--muted);">(Video game "Grand Theft Auto" allegedly caused violent behavior)</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Netflix quote -->
+            <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;">
+                <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;margin-bottom:2rem;width:100%;">
+                    <h3 style="margin-bottom:1.5rem;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:var(--accent2);">Estate of B.H. v. Netflix, Inc.:</h3>
+                    <blockquote style="margin:0;padding-left:2rem;border-left:3px solid var(--accent);font-style:italic;color:#e8e8e8;font-size:clamp(1.4rem,2.5vw,1.8rem);line-height:1.4;">
+                        "[w]ithout the content, there would be no claim" and granted the defendant's motion to dismiss on the ground that the plaintiff's harm was caused by Netflix's expressive content
+                    </blockquote>
+                    <p style="margin:1rem 0 0 0;font-size:clamp(1.1rem,1.8vw,1.3rem);color:var(--muted);">(Netflix's "13 Reasons Why" allegedly caused self-harm)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case citations at bottom right -->
+        <div style="position:absolute;bottom:4vh;right:8vw;font-size:0.9rem;color:#c3c7cf;">
+            Estate of B.H. v. Netflix, Inc.; James v. Meow Media
+        </div>
+    </section>
+
+<!-- Slide 1: Split Outcomes — “Product” vs. “Not a Product” -->
+<section class="slide">
+  <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+    <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">
+      Outcomes Split: <span class="accent">Are Apps/AI “Products”?</span>
+    </h1>
+  </div>
+
+  <div style="display:flex;margin-top:25vh;padding:0 8vw;gap:4vw;align-items:flex-start;">
+    <!-- LEFT: Not a Product (content/service) -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;margin-bottom:2rem;width:100%;">
+        <h3 style="margin:0 0 0.75rem 0;font-size:clamp(1.4rem,2.2vw,1.8rem);font-weight:700;color:var(--accent2);">
+          NOT a Product (content / service)
+        </h3>
+
+        <div style="display:grid;gap:1rem;">
+          <div style="padding:1rem;border-left:3px solid var(--accent2);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">James v. Meow Media, Inc., <em>300 F.3d 683</em> (6th Cir. 2002).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (High school shooting allegedly caused by violent video games/movies/websites; held
+              “intangible thoughts, ideas, and messages” aren’t products — content-based claims not cognizable.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent2);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Estate of B.H. v. Netflix, Inc., <em>2022 WL 551701</em> (N.D. Cal. Jan. 12, 2022).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (“13 Reasons Why” content allegedly led to self-harm; court: claim targets expressive content, not a product; dismissed.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent2);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Zeincik v. Snap, Inc., <em>2023 WL 2638314</em> (N.D. Cal. Feb. 3, 2023).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Threatening messages; court characterized Snapchat as a service rather than a product; products liability rejected.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent2);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Doe v. Uber Techs., Inc., <em>2020 WL 13801354</em> (Cal. Super. Nov. 30, 2020).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Assault by “fake driver”; court: app used to obtain a ride (a service) and not analogous to tangible property; not a product.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent2);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Jackson v. Airbnb, Inc., <em>639 F. Supp. 3d 994</em> (C.D. Cal. 2022); Jacobs v. Meta Platforms, Inc., <em>2023 WL 2655586</em> (Cal. Super. Mar. 10, 2023).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Courts categorized Airbnb/Facebook as services, short-circuiting products liability at the threshold.)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Product (design/functionality) -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;margin-bottom:2rem;width:100%;">
+        <h3 style="margin:0 0 0.75rem 0;font-size:clamp(1.4rem,2.2vw,1.8rem);font-weight:700;color:var(--accent);">
+          Product / Feature-as-Product (design-focused)
+        </h3>
+
+        <div style="display:grid;gap:1rem;">
+          <div style="padding:1rem;border-left:3px solid var(--accent);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">In re Soc. Media Adolescent Addiction/Personal Injury Prods. Liab. Litig., <em>702 F. Supp. 3d 809</em> (N.D. Cal. 2023).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Apps-as-whole: not products; but <em>features</em>—age/parental controls, screen-time limits, barriers to deletion, filters/labels—adequately alleged as products under a defect-specific approach.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">In re Uber Techs., Inc., Passenger Sexual Assault Litig., <em>2024 WL 4211217</em> (N.D. Cal. Aug. 15, 2024).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Uber app held sufficiently analogous to tangible personal property; treated as a product.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Brookes v. Lyft, Inc., <em>2022 WL 19799628</em> (Fla. Cir. Ct. Sept. 30, 2022).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Alleged UI/UX design distracted drivers; court analogized to tangible machines; app treated as product.)
+            </div>
+          </div>
+
+          <div style="padding:1rem;border-left:3px solid var(--accent);background:rgba(255,255,255,.02);border-radius:8px;">
+            <div style="font-weight:700;">Lemmon v. Snap, Inc., <em>995 F.3d 1085</em> (9th Cir. 2021).</div>
+            <div style="color:#cbd5e1;font-size:0.95rem;">
+              (Negligent design claim re “speed filter”/in-app incentives; court treated Snap like a product manufacturer for design-based claims.)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Caption -->
+  <div style="position:absolute;bottom:4vh;right:8vw;font-size:0.9rem;color:#c3c7cf;">
+    Left: content/service → not products. Right: design/functionality → product (esp. features).
+  </div>
+</section>
+
+<!-- Slide 2: In re Social Media — App vs. Feature Framing -->
+<section class="slide">
+  <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+    <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">
+      Framework: <span class="accent">In re Social Media</span> (702 F. Supp. 3d 809)
+    </h1>
+  </div>
+
+  <div style="display:flex;margin-top:25vh;padding:0 8vw;gap:4vw;align-items:stretch;">
+    <!-- App-as-a-Whole (Less Likely) -->
+    <div style="flex:1;">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;height:100%;">
+        <h3 style="margin:0 0 0.75rem 0;font-size:clamp(1.4rem,2.2vw,4rem);font-weight:700;color:var(--muted);">
+          “All-or-Nothing” — App as a Whole <span style="font-weight:600;color:#f59e0b;">(less likely)</span> 
+        </h3>
+        <ul style="margin:0;padding-left:1.2rem;line-height:1.5;color:#cbd5e1;font-size:1rem;">
+          <li>Court rejected broad “the app is the product” theory, steering analysis away from content and toward design.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Feature-Level (More Likely) -->
+    <div style="flex:1;">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;height:100%;">
+        <h3 style="margin:0 0 0.75rem 0;font-size:clamp(1.4rem,2.2vw,4rem);font-weight:700;color:var(--accent);">
+          “Defect-Specific” — Feature-Level <span style="font-weight:600;color:#10b981;">(more likely)</span>
+        </h3>
+        <div style="color:#cbd5e1;font-size:1rem;line-height:1.6;">
+          <div style="margin-bottom:0.5rem;font-weight:600;">Ask the Third Restatement questions of each feature:</div>
+          <ol style="margin:0 0 1rem 1.2rem;">
+            <li>Is it tangible or sufficiently analogous to tangible property?</li>
+            <li>Is it a <em>service</em> (if so, not a product)?</li>
+            <li>Is it akin to ideas/content/expression (if so, not a product)?</li>
+          </ol>
+
+        </div>
+       
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;bottom:4vh;right:8vw;font-size:0.9rem;color:#c3c7cf;">
+    In re Social Media Adolescent Addiction/Personal Injury Prods. Liab. Litig., 702 F. Supp. 3d 809 (N.D. Cal. 2023).
+  </div>
+</section>
+
+    <section class="slide">
+        <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+            <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">Background: <span class="accent">Design &
+                    Warnings</span> Tests</h1>
+        </div>
+        <div style="margin-top:14vh;padding:0 8vw;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3vw;">
+                <div
+                    style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;">
+                    <h3 style="margin:0 0 .8rem 0;color:var(--accent);font-size:clamp(1.4rem,2.3vw,1.8rem);">Design Defect
+                    </h3>
+                    <ul style="list-style:none;margin:0;padding:0;font-size:clamp(1.2rem,2vw,1.5rem);line-height:1.4;">
+                        <li>Risk–utility with <b>Reasonable-Alternative-Design</b> prescribed by Restatement Third §2(b) in many courts.
+                            </li>
+                        <li>Consumer-expectations test used in some jurisdictions/contexts.</li>
+                    </ul>
+                </div>
+                <div
+                    style="background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:12px;padding:2rem;">
+                    <h3 style="margin:0 0 .8rem 0;color:var(--accent);font-size:clamp(1.4rem,2.3vw,1.8rem);">
+                        Warnings/Instructions</h3>
+                    <ul style="list-style:none;margin:0;padding:0;font-size:clamp(1.2rem,2vw,1.5rem);line-height:1.4;">
+                        <li>§2(c): inadequate warnings can render a product defective.
+                            </li>
+                        <li>Open-and-obvious dangers may limit duty to warn/design in some jurisdictions.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section> <!-- 10: Case Study – Tesla Florida (Banner crash / Autopilot) -->
+<!-- Case Study: Tesla Autopilot Jury Verdict -->
+<section class="slide">
+  <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+    <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">
+      Case Study: <span class="accent">Benavides & Angulo v. Tesla, Inc.</span>
+    </h1>
+  </div>
+
+  <div style="display:flex;gap:4vw;align-items:flex-start;justify-content:center;margin-top:22vh;padding:0 8vw;">
+    <!-- Facts card -->
+    <div style="flex:1.2;max-width:800px;">
+      <div style="background:#0b0b0b;border:1px solid var(--stroke);border-radius:16px;padding:1.5rem 2rem;box-shadow:0 8px 32px rgba(0,0,0,.45);">
+        <div style="font-weight:700;color:#f7c58c;margin-bottom:.5rem;">Facts:</div>
+        <ul style="margin:0;padding-left:1rem;line-height:1.6;color:#e8e8e8;font-size:clamp(1.05rem,1.9vw,1.25rem);">
+          <li>2019 Key Largo crash: Model S with Autopilot active hit a parked Chevy Tahoe; impact killed Naibel Benavides León and seriously injured Dillon Angulo.</li>
+          <li>Plaintiffs alleged Autopilot was defectively designed/marketed—usable off-highway without adequate gating; failed to disengage or warn.</li>
+          <li>After ~3-week trial, Miami federal jury found Tesla partially liable (Autopilot a legal cause of harm) and returned punitive damages.</li>
+          <li>Damages: $129M compensatory (Tesla responsible for 33%) + $200M punitive = ~$243M against Tesla; company has noticed appeal.</li>
+        </ul>
+      </div>
+    </div>
+
+     <!-- Image -->
+     <div style="flex:1.3;display:flex;justify-content:center;">
+       <img src="https://www.techi.com/wp-content/uploads/2025/09/Tesla-challenges-243-million-verdict-in-Autopilot-death-trial.webp" alt="Tesla Autopilot verdict coverage" style="width:min(700px,45vw);height:auto;border-radius:12px;box-shadow:0 10px 36px rgba(0,0,0,.5);object-fit:cover;">
+     </div>
+  </div>
+
+  <!-- Bluebook-style cite -->
+  <div style="position:absolute;bottom:4vh;right:8vw;font-size:0.9rem;color:#c3c7cf;">
+    <em>Benavides v. Tesla, Inc.</em>, No. 1:21-cv-21940-BB (S.D. Fla. jury verdict Aug. 1, 2025).
+  </div>
+</section>
+
+<!-- Case Study: Garcia v. Character.AI & Raine v. OpenAI -->
+<section class="slide">
+  <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+    <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">
+      Case Study: <span class="accent">Garcia v. Character.AI</span> & <span class="accent">Raine v. OpenAI</span>
+    </h1>
+  </div>
+
+  <div style="display:flex;gap:4vw;align-items:flex-start;justify-content:center;margin-top:22vh;padding:0 8vw;">
+    <!-- Facts card -->
+    <div style="flex:1.2;max-width:800px;">
+      <div style="background:#0b0b0b;border:1px solid var(--stroke);border-radius:16px;padding:1.5rem 2rem;box-shadow:0 8px 32px rgba(0,0,0,.45);">
+        <div style="font-weight:700;color:#f7c58c;margin-bottom:.5rem;">Facts:</div>
+        <ul style="margin:0;padding-left:1rem;line-height:1.6;color:#e8e8e8;font-size:clamp(1.05rem,1.9vw,1.25rem);">
+          <li><strong>Garcia v. Character Techs., Inc.</strong> (M.D. Fla.): Mother alleged her teen son became addicted to Character.AI potentially leading to his death; court largely <em>denied</em> motions to dismiss—allowing product-liability and warning theories to proceed (while dismissing IIED), and letting a "component-part manufacturer" theory against Google move forward at the pleadings stage.</li>
+          <li><strong>Raine v. OpenAI, Inc.</strong> (San Francisco Super. Ct.): Parents allege ChatGPT-4o validated and coached their 16-year-old's self harm; claims for strict liability, negligence, wrongful death; <em>newly filed</em>, no merits ruling yet.</li>
+        </ul>
+      </div>
+    </div>
+
+     <!-- Images -->
+     <div style="flex:1.3;display:flex;flex-direction:column;gap:1.5rem;align-items:center;">
+       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnWCXyxmCD8PrtLwvWiuJhZnOw99MuomrBWQ&s" alt="Character.AI interface" style="width:min(500px,35vw);height:auto;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);object-fit:cover;">
+       <img src="https://www.rollingstone.com/wp-content/uploads/2023/06/Is-Suing-ChatGPT-for-Defamation-Going-to-Work.jpg?crop=0px%2C67px%2C1800px%2C1014px&resize=1600%2C900" alt="OpenAI ChatGPT litigation" style="width:min(500px,35vw);height:auto;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);object-fit:cover;">
+     </div>
+  </div>
+
+   <!-- Bluebook-style cites -->
+   <div style="position:absolute;bottom:4vh;right:8vw;font-size:0.9rem;color:#c3c7cf;">
+     <em>Garcia v. Character Techs., Inc.</em>, No. 6:24-cv-1903-ACC-NWH, 2025 WL 1461721 (M.D. Fla. May 21, 2025); <em>Raine v. OpenAI, Inc.</em>, No. CGC-25-628528 (Cal. Super. Ct. filed Aug. 26, 2025).
+   </div>
+ </section>
+
+ <!-- Discussion Slide -->
+ <section class="slide">
+   <div style="position:absolute;top:8vh;left:8vw;right:8vw;z-index:10;">
+     <h1 style="margin:0;font-size:clamp(2.5rem,5vw,4rem);line-height:1.1;">
+       Discussion: <span class="accent">Product Classification</span>
+     </h1>
+   </div>
+   
+   <div style="margin-top:25vh;padding:0 8vw;text-align:center;">
+     <div style="background:rgba(255,255,255,.05);border:2px solid var(--accent2);border-radius:16px;padding:3rem 4rem;max-width:900px;margin:0 auto;box-shadow:0 8px 32px rgba(0,0,0,.4);">
+       <div style="font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.4;color:var(--accent2);font-weight:600;">
+         Do you think Tesla Autopilot should be considered a product?<br/><br/>
+         What about Character.AI/ChatGPT?<br/><br/>
+         What distinguishes them?<br/><br/>
+         <em style="color:var(--muted);font-size:0.8em;font-weight:400;">Panel discussion - 5 minutes...</em>
+       </div>
+     </div>
+   </div>
+ </section>
+
+    <!-- Transition Slide -->
+    <section class="slide">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center;">
+        <div style="font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; color: var(--accent);">
+          Moving to <span style="color: var(--accent2);">Defamation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 39: Elements of Defamation -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Elements of <span class="accent">Defamation</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.3; color: #e8e8e8; max-width: 1000px; margin: 0 auto;">
+          <p style="margin-bottom: 3rem; padding-left: 1rem; border-left: 3px solid var(--accent);">The four elements required to prove defamation:</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">1</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">False Statement</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">A false statement purporting to be fact</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">2</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Publication</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Publication or communication to a third person</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">3</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent);">Fault</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Fault amounting to at least negligence (or actual malice for public figures)</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="background: var(--accent2); color: #000; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">4</div>
+                <div>
+                  <h3 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 700; color: var(--accent2);">Damages</h3>
+                  <p style="margin: 0.5rem 0 0 0; font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--muted);">Damages or harm to reputation</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem; margin-top: 2rem; text-align: center;">
+            <p style="margin-bottom: 0; font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--accent2); font-weight: 600;">
+              Why would it be different for public figures?
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Defamation Case Studies -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Defamation <span class="accent">Case Studies</span></h1>
+      </div>
+
+      <div style="display: flex; margin-top: 12vh; padding: 0 8vw; gap: 4vw; align-items: flex-start;">
+        <!-- Left Column: Battle v. Microsoft -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">Battle v. Microsoft Corporation</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Jeffery Battle (entrepreneur and Professor) confused with Jeffrey Battle (convicted criminal)</li>
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">AI provided false information about Jeffery Battle's criminal record</li>
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent2);">Battle is President and CEO of Battle Enterprises, LLC and "The Aerospace Professor"</li>
+              <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Honorably discharged U.S. Air Force veteran and Adjunct Professor at Embry-Riddle Aeronautical University</li>
+            </ul>
+            <div style="margin-top: 1rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem); color: var(--muted);">
+              Battle v. Microsoft Corporation, 1:23-cv-01822 (D. Maryland, 2023)
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Starbuck v. Meta -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-start;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; width: 100%;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent2);">Starbuck v. Meta Platforms, Inc.</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.4; color: #e8e8e8;">
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent);">Conservative activist Robby Starbuck filed defamation lawsuit against Meta in April 2025</li>
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent);">Meta's AI chatbot accused Starbuck of participating in January 6th Capitol riot</li>
+              <li style="margin-bottom: 0.8rem; padding-left: 1rem; border-left: 2px solid var(--accent);">AI also labeled Starbuck as a white nationalist</li>
+              <li style="margin-bottom: 0; padding-left: 1rem; border-left: 2px solid var(--accent);">Settled in August 2025 with Meta agreeing to improve AI accuracy and neutrality, Starbuck as advisor</li>
+            </ul>
+            <div style="margin-top: 1rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem); color: var(--muted);">
+              Starbuck v. Meta Platforms, Inc. (Settled August 2025)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Other Torts -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Other <span class="accent">Torts</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.3; color: #e8e8e8; max-width: 1600px; margin: 0 auto;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3vw;">
+            <!-- Left Table -->
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--accent);">
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent);">Scenario (Examples)</th>
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent);">Liability Regime (Examples)</th>
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent);">Related Existing Cases</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid var(--stroke);">
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Providing false defamatory information about someone</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Defamation</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Walters v. OpenAI L.L.C., Battle v. Microsoft Corporation</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--stroke);">
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Recruiting an individual to conduct an act of terror</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Justice Against Sponsors of Terrorism Act</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Gonzalez v. Google, Twitter, Inc. v. Taamneh</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--stroke);">
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Convincing someone to overstay their visa with false information</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Federal Human Smuggling Laws (8 U.S.C. § 1324)</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">United States v. Hansen</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Providing detailed information on how to harm someone</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Wrongful Death, Personal Injury, Aiding and Abetting Murder</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Rice v. Paladin Enterprises, Inc., Commonwealth v. Carter</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Right Table -->
+            <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--accent2);">
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent2);">Scenario (Examples)</th>
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent2);">Liability Regime (Examples)</th>
+                    <th style="padding: 1rem 0.5rem; text-align: left; font-size: clamp(1rem, 1.8vw, 1.3rem); color: var(--accent2);">Related Existing Cases</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid var(--stroke);">
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Providing information and instructions on how to launder money</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">26 U.S.C. § 7206(2) (Counseling violations of tax laws)</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">United States v. Freeman</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Telling someone a product or activity is safe when it isn't</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Negligent or conscious misrepresentation leading to injury</td>
+                    <td style="padding: 0.8rem 0.5rem; font-size: clamp(0.9rem, 1.6vw, 1.2rem);">Winter v. G.P. Putnam's Sons, Randi W. v. Muroc Joint Unified Sch. Dist.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem; font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--muted);">
+            Table 1. Describing red teaming scenarios and the potential liability associated with the tested model behavior.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- You Can't Sue an AI -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">You Can't Sue an AI</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <div style="margin-bottom: 2rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">1. AI Lacks Legal Agency</h3>
+              <p style="margin: 0; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                AI does not have "intent" or "agency" in the way that an employee does. You can't push responsibility onto the AI itself.
+              </p>
+            </div>
+            
+            <div>
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent2);">2. The Human Status Question</h3>
+              <p style="margin: 0; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                If you allow AI to have the status of a human (agency, ethics, loyalty, responsibility, reliability), what could be the effect? What are the pros and cons?
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- 41: Challenges: Mens Rea -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Challenges: <span class="accent">Mens Rea</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <div style="margin-bottom: 2rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">1. Knowing</h3>
+              <ul style="margin: 0; padding-left: 1.5rem; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                <li style="margin-bottom: 0.5rem;">JASTA, Money Laundering, etc.</li>
+                <li style="margin-bottom: 0.5rem;">But hard to prove creator <em>knows</em> the AI system will generate the particular harm.</li>
+                <li style="margin-bottom: 0;">Laundering knowing: make sure your webscrape has lots of harmful data and "accidentally" make it more prevalent.</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent2);">2. Recklessness</h3>
+              <ul style="margin: 0; padding-left: 1.5rem; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                <li>Could potentially argue that it's reckless to train on harmful data, but technical tools for harm mitigation are so in flux, not sure if this would apply.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Section 230 Transition Slide -->
+    <section class="slide" >
+      <div style="width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <h1 style="margin: 0 auto; font-size: clamp(3rem, 7vw, 5rem); line-height: 1.1; color: var(--accent);">
+          From Liability to Immunity
+        </h1>
+      </div>
+    </section>
+
+
+    <!-- Section 230 Title -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Section 230</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">Communications Decency Act of 1996</h3>
+            <p style="margin-bottom: 0; font-size: clamp(1.2rem, 2.2vw, 1.6rem); color: var(--muted);">Protection for "Good Samaritan" blocking and screening of offensive material</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 230 Legal Text Part 1 -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section 230 <span class="accent">Legal Text</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.4; color: #e8e8e8; max-width: 1400px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+            <h3 style="margin-bottom: 1rem; font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 700; color: var(--accent);">(c) PROTECTION FOR "GOOD SAMARITAN" BLOCKING AND SCREENING OF OFFENSIVE MATERIAL</h3>
+            
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(1) TREATMENT OF PUBLISHER OR SPEAKER</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">No provider or user of an <span style="color: var(--accent); text-decoration: underline;">interactive computer service</span> shall be treated as the publisher or speaker of any information provided by another <span style="color: var(--accent); text-decoration: underline;">information content provider</span>.</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(2) CIVIL LIABILITY</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">No provider or user of an interactive computer service shall be held liable on account of—</p>
+              <ul style="margin: 0.5rem 0 0 2rem; padding: 0;">
+                <li style="margin-bottom: 0.5rem;">(A) any action taken to enable or make available to information content providers or others the technical means to restrict access to material described in paragraph (1); or</li>
+                <li>(B) any action taken in good faith to restrict access to or availability of material that the provider or user considers to be obscene, lewd, lascivious, filthy, excessively violent, harassing, or otherwise objectionable, whether or not such material is constitutionally protected.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 230 Legal Text Part 2 -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section 230 <span class="accent">Effect on Other Laws</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.4; color: #e8e8e8; max-width: 1400px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+            <h3 style="margin-bottom: 1rem; font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 700; color: var(--accent);">(d) EFFECT ON OTHER LAWS</h3>
+            
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(1) NO EFFECT ON CRIMINAL LAW</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Nothing in this section shall be construed to impair the enforcement of section <span style="color: var(--accent); text-decoration: underline;">223</span> of this title, chapter 71 (relating to obscenity) or <span style="color: var(--accent); text-decoration: underline;">231</span> of this title (relating to sexual exploitation of children), or any other Federal criminal statute.</p>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(2) NO EFFECT ON INTELLECTUAL PROPERTY LAW</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Nothing in this section shall be construed to limit or expand any law pertaining to intellectual property.</p>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(3) STATE LAW</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Nothing in this section shall be construed to prevent any <span style="color: var(--accent); text-decoration: underline;">State</span> from enforcing any State law that is consistent with this section.</p>
+            </div>
+
+            <div>
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(4) NO EFFECT ON COMMUNICATIONS PRIVACY LAW</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">Nothing in this section shall be construed to limit the application of the <span style="color: var(--accent); text-decoration: underline;">Electronic Communications Privacy Act of 1986</span> or any of the amendments made by such Act, or any similar State law.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 230 Definitions -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section 230 <span class="accent">Definitions</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.4; color: #e8e8e8; max-width: 1400px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 2rem;">
+            <h3 style="margin-bottom: 1rem; font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 700; color: var(--accent);">(f) Definitions</h3>
+            
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(1) INTERNET</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">The term "<span style="color: var(--accent); text-decoration: underline;">Internet</span>" means the international computer network of both Federal and non-Federal interoperable packet switched data networks.</p>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(2) INTERACTIVE COMPUTER SERVICE</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">The term "<span style="color: var(--accent); text-decoration: underline;">interactive computer service</span>" means any <span style="color: var(--accent); text-decoration: underline;">information service, system, or access software provider</span> that provides or enables computer access by multiple users to a computer server.</p>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(3) INFORMATION CONTENT PROVIDER</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">The term "<span style="color: var(--accent); text-decoration: underline;">information content provider</span>" means any <span style="color: var(--accent); text-decoration: underline;">person</span> or entity that is responsible, in whole or in part, for the creation or development of information provided through the <span style="color: var(--accent); text-decoration: underline;">interactive computer service</span>.</p>
+            </div>
+
+            <div>
+              <h4 style="margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 600; color: var(--accent2);">(4) ACCESS SOFTWARE PROVIDER</h4>
+              <p style="margin: 0; padding-left: 1rem; border-left: 2px solid var(--accent2);">The term "access software provider" means a provider of software (including client or server software), or enabling tools that do any one or more of the following:</p>
+              <ul style="margin: 0.5rem 0 0 2rem; padding: 0;">
+                <li style="margin-bottom: 0.5rem;">(A) filter, screen, allow, or disallow content;</li>
+                <li style="margin-bottom: 0.5rem;">(B) pick, choose, analyze, or digest content; or</li>
+                <li>(C) transmit, receive, display, forward, cache, search, subset, organize, reorganize, or translate content.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gonzalez v. Google Case -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Gonzalez v. Google</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">Case Background:</h3>
+            <ul style="margin: 0; padding-left: 1.5rem; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+              <li style="margin-bottom: 0.5rem;">Family of Nohemi Gonzalez, killed in 2015 Paris terrorist attacks, sued Google</li>
+              <li style="margin-bottom: 0.5rem;">Alleged YouTube's algorithm recommended ISIS recruitment videos</li>
+              <li style="margin-bottom: 0.5rem;">Supreme Court heard oral arguments in February 2023</li>
+              <li style="margin-bottom: 0;">Key question: Does Section 230 protect algorithmic recommendations?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Anderson v. TikTok Quote -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Anderson v. TikTok</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <blockquote style="margin: 0; padding-left: 2rem; border-left: 3px solid var(--accent2); font-style: italic; color: #e8e8e8; font-size: clamp(1.4rem, 2.5vw, 1.8rem); line-height: 1.4;">
+              "Had the video been viewed 'through TikTok's search function, rather than through [] FYP, then TikTok may be viewed more like a repository of third-party content than an affirmative promoter of such content'"
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Anderson v. TikTok Discussion -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;"><span class="accent">Anderson v. TikTok</span></h1>
+      </div>
+      <div style="margin-top: 25vh; padding: 0 8vw; text-align: center;">
+        <div style="background: rgba(255,255,255,.05); border: 2px solid var(--accent2); border-radius: 16px; padding: 3rem 4rem; max-width: 800px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.4);">
+          <div style="font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.4; color: var(--accent2); font-weight: 600;">
+            Discussion question: Why is Prof. Goldman so upset about the decision?<br/><br/>
+            Do you agree or disagree?<br/><br/>
+            <em style="color: var(--muted); font-size: 0.8em; font-weight: 400;">Panel discussion - 5 minutes...</em>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hypothetical Scenario -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">"<span class="accent">Hypothetical</span>"</h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">Google Search Result:</h3>
+            <div style="text-align: center;">
+              <img src="lecture4_images/page056_img01.png" alt="Google Search Hypothetical" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 230 Immunity Challenges -->
+    <section class="slide">
+      <div style="position: absolute; top: 8vh; left: 8vw; right: 8vw; z-index: 10;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Section 230 <span class="accent">Immunity Challenges</span></h1>
+      </div>
+      <div style="margin-top: 12vh; padding: 0 8vw;">
+        <div style="font-size: clamp(1.8rem, 3vw, 2.4rem); line-height: 1.3; color: #e8e8e8; max-width: 1200px; margin: 0 auto;">
+          <div style="background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 12px; padding: 3rem;">
+            <div style="margin-bottom: 2rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent);">1. General assumption that generative AI is not covered by Section 230 Immunity</h3>
+              <ul style="margin: 0; padding-left: 1.5rem; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                <li>E.g., Justice Gorsuch in Gonzalez oral arguments.</li>
+              </ul>
+            </div>
+            
+            <div style="margin-bottom: 2rem;">
+              <h3 style="margin: 0 0 1rem 0; font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 700; color: var(--accent2);">2. But... not necessarily so clear.</h3>
+              <ul style="margin: 0; padding-left: 1.5rem; font-size: clamp(1.2rem, 2.2vw, 1.6rem); line-height: 1.5;">
+                <li style="margin-bottom: 0.5rem;">Generative models can be grounded in third-party content (if you don't use custom data).</li>
+                <li>Can augment design to rely more heavily on third-party content (e.g., focus on extractive designs like Google Snippets).</li>
+              </ul>
+            </div>
+
+            <div style="background: rgba(255, 0, 0, 0.1); border: 2px solid #ff6b6b; border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+              <h4 style="margin: 0 0 1rem 0; font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 700; color: #ff6b6b;">Catch-22</h4>
+              <p style="margin: 0; font-size: clamp(1.2rem, 2.2vw, 5rem); line-height: 1.5; color: white;">
+                Designs/arguments more likely to grant Section 230 immunity are directly antithetical to fair use defenses for copyright claims. As we see in Anderson also tension between getting First Amendment protections or Section 230 protections.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tort Liability Incentives for AI Design -->
+    <section class="slide">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80vw;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">What Incentives Does Tort Liability Create for <span class="accent">AI Design Decisions</span>?</h1>
+        <div style="font-size: clamp(2rem, 4vw, 3rem); color: var(--accent2); font-weight: 700; margin-top: 2rem;">
+          Together on the blackboard
+        </div>
+      </div>
+    </section>
+
+    <!-- Final Discussion: Torts vs. Regulation -->
+    <section class="slide">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80vw;">
+        <h1 style="margin: 0; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">Do you think that torts are the right way to incentivize <span class="accent">safe design</span>? Is regulation better?</h1>
+      </div>
+    </section>
+
+  </main>
+  <footer>
+    <div class="pill">Slide <span id="index">1</span>/<span id="total">67</span></div>
+    <div class="pill">© for teaching use • Not legal advice</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const idxEl = document.getElementById('index');
+  const totalEl = document.getElementById('total');
+  const prog = document.getElementById('progressbar');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const deck = document.querySelector('.deck');
+  totalEl.textContent = total;
+  
+  function getSlideFromHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/slide-(\d+)/);
+    if (match) {
+      const slideNum = parseInt(match[1]) - 1; 
+      if (slideNum >= 0 && slideNum < total) {
+        return slideNum;
+      }
+    }
+    return 0; 
+  }
+  
+  let i = getSlideFromHash();
+
+  function render(){
+    slides.forEach((s, j)=>{ 
+      s.classList.toggle('active', j===i); 
+    });
+    idxEl.textContent = i+1;
+    prog.style.width = ((i+1)/total*100).toFixed(1)+'%';
+    window.location.hash = `slide-${i+1}`;
+    
+    // Clear any cached embeds when changing slides
+    clearEmbeddedContent();
+  }
+  
+  function clearEmbeddedContent() {
+    // Reset all iframes to prevent cross-slide contamination
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      const currentSlide = iframe.closest('.slide');
+      if (!currentSlide.classList.contains('active')) {
+        // Add cache-busting parameter to force reload
+        const url = new URL(iframe.src);
+        url.searchParams.set('cache_bust', Date.now());
+        iframe.src = url.toString();
+      }
+    });
+    
+    // Also pause any audio elements on inactive slides
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      const currentSlide = audio.closest('.slide');
+      if (!currentSlide.classList.contains('active')) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+  }
+  
+  function next(){ if(i<total-1){ i++; render(); } }
+  function prev(){ if(i>0){ i--; render(); } }
+  
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+      if (deck.requestFullscreen) {
+        deck.requestFullscreen();
+      } else if (deck.webkitRequestFullscreen) {
+        deck.webkitRequestFullscreen();
+      } else if (deck.mozRequestFullScreen) {
+        deck.mozRequestFullScreen();
+      } else if (deck.msRequestFullscreen) {
+        deck.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  
+  window.addEventListener('hashchange', () => {
+    i = getSlideFromHash();
+    render();
+  });
+  
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key==='PageDown') next();
+    if(e.key==='ArrowLeft'  || e.key==='PageUp')   prev();
+    if(e.key==='f' || e.key==='F' || e.key==='F11') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  });
+
+  render();
+  buildAssetGallery();
+
+  // Custom Audio Player with Waveform
+  function initTomWaitsAudioPlayer() {
+    const audio = document.getElementById('tomWaitsAudio');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+    const seekBar = document.getElementById('seekBar');
+    const seekProgress = document.getElementById('seekProgress');
+    const progressBar = document.getElementById('progressBar');
+    const canvas = document.getElementById('waveformCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let isPlaying = false;
+    let waveformData = [];
+    
+    // Generate simple waveform visualization
+    function generateWaveform() {
+      const width = canvas.width;
+      const height = canvas.height;
+      const barCount = 100;
+      const barWidth = width / barCount;
+      
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Generate random waveform data for visualization
+      for (let i = 0; i < barCount; i++) {
+        const barHeight = Math.random() * height * 0.8;
+        const x = i * barWidth;
+        const y = (height - barHeight) / 2;
+        
+        ctx.fillStyle = `rgba(212, 165, 116, ${0.3 + Math.random() * 0.7})`;
+        ctx.fillRect(x, y, barWidth - 1, barHeight);
+      }
+    }
+    
+    // Format time
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // Update progress
+    function updateProgress() {
+      if (audio.duration) {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        seekProgress.style.width = progress + '%';
+        progressBar.style.width = progress + '%';
+        currentTimeSpan.textContent = formatTime(audio.currentTime);
+      }
+    }
+    
+    // Event listeners
+    audio.addEventListener('loadedmetadata', () => {
+      durationSpan.textContent = formatTime(audio.duration);
+      generateWaveform();
+    });
+    
+    audio.addEventListener('timeupdate', updateProgress);
+    
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      playPauseBtn.textContent = '▶';
+      seekProgress.style.width = '0%';
+      progressBar.style.width = '0%';
+    });
+    
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = '▶';
+        isPlaying = false;
+      } else {
+        audio.play();
+        playPauseBtn.textContent = '⏸';
+        isPlaying = true;
+      }
+    });
+    
+    seekBar.addEventListener('click', (e) => {
+      const rect = seekBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = clickX / rect.width;
+      audio.currentTime = percentage * audio.duration;
+    });
+  }
+  
+  // Initialize audio player when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTomWaitsAudioPlayer);
+  } else {
+    initTomWaitsAudioPlayer();
+  }
+
+  // Dynamically populate the gallery with local files by predictable names
+  function buildAssetGallery(){
+    const wrap = document.getElementById('assetGallery');
+    if(!wrap) return;
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
+    grid.style.gap = '12px';
+
+    const pad2 = n => String(n).padStart(2,'0');
+
+    function addTile(src, label){
+      const fig = document.createElement('figure');
+      fig.style.margin = '0';
+      fig.style.background = 'rgba(255,255,255,.03)';
+      fig.style.border = '1px solid var(--stroke)';
+      fig.style.borderRadius = '10px';
+      fig.style.overflow = 'hidden';
+      fig.style.boxShadow = 'var(--shadow)';
+
+      const img = new Image();
+      img.src = src;
+      img.style.width = '100%';
+      img.style.height = '160px';
+      img.style.objectFit = 'cover';
+      img.loading = 'lazy';
+      img.onerror = () => { fig.remove(); };
+
+      const cap = document.createElement('figcaption');
+      cap.textContent = label;
+      cap.style.fontSize = '.85rem';
+      cap.style.padding = '.5rem .75rem';
+      cap.style.color = 'var(--muted)';
+
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      grid.appendChild(fig);
+    }
+
+    // Page previews (page_01.png .. page_60.png)
+    for(let i=1;i<=60;i++){
+      const file = `images/page_${pad2(i)}.png`;
+      addTile(file, file);
+    }
+
+    // Extracted images (img_pNN_MM with png/jpeg)
+    const tryAdd = (p, m) => {
+      const bases = [
+        `images/img_p${pad2(p)}_${pad2(m)}.png`,
+        `images/img_p${pad2(p)}_${pad2(m)}.jpeg`,
+        `images/img_p${pad2(p)}_${pad2(m)}.jpg`
+      ];
+      // create an offscreen preloader chain to only keep ones that exist
+      (function tryNext(k){
+        if(k>=bases.length) return; // nothing
+        const test = new Image();
+        test.onload = () => { addTile(bases[k], bases[k]); };
+        test.onerror = () => { tryNext(k+1); };
+        test.src = bases[k];
+      })(0);
+    };
+
+    for(let p=1;p<=60;p++){
+      for(let m=1;m<=8;m++){
+        tryAdd(p,m);
+      }
+    }
+
+    wrap.appendChild(grid);
+  }
+
+})();
+  </script>
+
+</body>
+</html>
